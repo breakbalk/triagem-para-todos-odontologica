@@ -1,0 +1,112 @@
+/* 1. VARIÁVEIS (Modularização de Cores) */
+:root {
+    --azul-primario: #353375;   /* Background botão */
+    --creme-texto: #F9F1C8;     /* Texto e borda botão */
+    --vermelho-hover: #ED3237;  /* Mouse por cima */
+    --azul-fundo: #D9F0FF;      /* Fundo das páginas */
+    --branco: #FFFFFF;
+}
+
+/* 2. RESET BÁSICO (Para Mobile-First) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--azul-fundo);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Exceção para a Home (como você pediu) */
+body.home-page {
+    background-color: var(--branco);
+}
+
+/* 3. O CARD DE LOGIN (O terreno do formulário) */
+.container-login {
+    width: 100%;
+    max-width: 400px;
+    background: var(--branco);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.logo-container h1 {
+    color: var(--azul-primario);
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+
+/* 4. ESTILO DOS INPUTS (Preparando o terreno) */
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: var(--azul-primario);
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--azul-primario);
+}
+
+/* 5. OS BOTÕES (Sua especificação detalhada) */
+.btn-principal {
+    width: 100%;
+    background-color: var(--azul-primario);
+    color: var(--creme-texto);
+    border: 2px solid var(--creme-texto);
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease; /* Suaviza as trocas de cor */
+    box-shadow: 0 4px 0px #252355; /* Sombra que simula a "tecla" */
+}
+
+/* Hover: Mouse em cima */
+.btn-principal:hover {
+    background-color: var(--vermelho-hover);
+    cursor: pointer; /* Garante a maozinha */
+}
+
+/* Active: O efeito de AFUNDAR (Ação de clicar) */
+.btn-principal:active {
+    transform: translateY(4px); /* Move o botão para baixo */
+    box-shadow: none; /* Remove a sombra para parecer que encostou no fundo */
+}
+
+/* Links auxiliares */
+.links-auxiliares {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.links-auxiliares a {
+    color: var(--azul-primario);
+    text-decoration: none;
+    font-weight: bold;
+}

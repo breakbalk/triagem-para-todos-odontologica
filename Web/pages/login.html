@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - COE UniEVANGÉLICA</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-login">
+
+    <main class="container-login">
+        <div class="logo-container">
+            <h1>COE</h1>
+            <p>Clínica Odontológica de Ensino</p>
+        </div>
+
+        <form action="/login" method="POST" class="form-card">
+            
+            <div class="input-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-principal">LOGIN</button>
+            
+            <div class="links-auxiliares">
+                <p>Ainda não tem cadastro? <a href="cadastro.html">Crie seu login</a></p>
+                <a href="recuperar-senha.html" class="link-esqueceu">Esqueceu a senha?</a>
+            </div>
+        </form>
+    </main>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
