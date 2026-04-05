@@ -110,3 +110,30 @@ body.home-page {
     text-decoration: none;
     font-weight: bold;
 }
+
+/* --- RESPONSIVIDADE (RNF01) --- */
+
+/* Configuração para Celulares Pequenos (Mobile-First) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px; /* Menos espaço nas bordas para sobrar espaço pro formulário */
+    }
+
+    .container-login {
+        padding: 20px; /* Diminui o respiro interno no card */
+        width: 100%;   /* Ocupa a largura total disponível */
+        border-radius: 10px;
+    }
+
+    .logo-container h1 {
+        font-size: 2rem; /* Diminui um pouco o título no celular */
+    }
+}
+
+/* Configuração para Tablets e Desktops */
+@media (min-width: 769px) {
+    .container-login {
+        width: 450px; /* Trava o tamanho para não ficar "esticado" demais no PC */
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2); /* Sombra mais elegante no PC */
+    }
+}
