@@ -1,13 +1,11 @@
-/* 1. VARIÁVEIS (Modularização de Cores) */
+/* --- VARIÁVEIS E RESET --- */
 :root {
-    --azul-primario: #353375;   /* Background botão */
-    --creme-texto: #F9F1C8;     /* Texto e borda botão */
-    --vermelho-hover: #ED3237;  /* Mouse por cima */
-    --azul-fundo: #D9F0FF;      /* Fundo das páginas */
-    --branco: #FFFFFF;
+    --primary-color: #353375;    /* Azul UniEVANGÉLICA */
+    --secondary-color: #F9F1C8;  /* Creme claro */
+    --white: #ffffff;
+    --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* 2. RESET BÁSICO (Para Mobile-First) */
 * {
     margin: 0;
     padding: 0;
@@ -15,125 +13,132 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    background-color: var(--azul-fundo);
+/* --- ESTRUTURA DO CORPO (CENTRALIZAÇÃO TOTAL) --- */
+body.bg-login {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
     min-height: 100vh;
-    padding: 20px;
+    width: 100%;
+    padding: 20px; /* Garante que o card não encoste nas bordas do celular */
 }
 
-/* Exceção para a Home (como você pediu) */
-body.home-page {
-    background-color: var(--branco);
+/* Troca de imagens conforme a tela */
+body.bg-login { background-image: url('../assets/img/login_mobile.png'); }
+
+@media (min-width: 768px) {
+    body.bg-login { background-image: url('../assets/img/login_tablet.png'); }
 }
 
-/* 3. O CARD DE LOGIN (O terreno do formulário) */
+@media (min-width: 1025px) {
+    body.bg-login { background-image: url('../assets/img/login_desktop.png'); }
+}
+
+/* --- CARD DE LOGIN (O SEGREDO DA DIMENSÃO) --- */
 .container-login {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    /* No Celular: Ocupa a largura disponível (com o padding do body) */
     width: 100%;
-    max-width: 400px;
-    background: var(--branco);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    
+    /* No Desktop/Tablet: Ele trava em 400px e não estica mais */
+    max-width: 400px; 
+    
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* --- LOGO E TEXTOS --- */
 .logo-container h1 {
-    color: var(--azul-primario);
-    font-size: 2.5rem;
+    color: var(--primary-color);
+    font-size: 2.8rem;
+    font-weight: 800;
     margin-bottom: 5px;
 }
 
-/* 4. ESTILO DOS INPUTS (Preparando o terreno) */
-.input-group {
+.logo-container p {
+    margin-bottom: 35px;
+    color: #444;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* --- FORMULÁRIO --- */
+.form-group {
+    margin-bottom: 22px;
     text-align: left;
-    margin-bottom: 20px;
 }
 
-.input-group label {
+label {
     display: block;
-    color: var(--azul-primario);
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.input-group input:focus {
-    border-color: var(--azul-primario);
-}
-
-/* 5. OS BOTÕES (Sua especificação detalhada) */
-.btn-principal {
-    width: 100%;
-    background-color: var(--azul-primario);
-    color: var(--creme-texto);
-    border: 2px solid var(--creme-texto);
-    padding: 15px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease; /* Suaviza as trocas de cor */
-    box-shadow: 0 4px 0px #252355; /* Sombra que simula a "tecla" */
-}
-
-/* Hover: Mouse em cima */
-.btn-principal:hover {
-    background-color: var(--vermelho-hover);
-    cursor: pointer; /* Garante a maozinha */
-}
-
-/* Active: O efeito de AFUNDAR (Ação de clicar) */
-.btn-principal:active {
-    transform: translateY(4px); /* Move o botão para baixo */
-    box-shadow: none; /* Remove a sombra para parecer que encostou no fundo */
-}
-
-/* Links auxiliares */
-.links-auxiliares {
-    margin-top: 20px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
-.links-auxiliares a {
-    color: var(--azul-primario);
-    text-decoration: none;
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(53, 51, 117, 0.1);
+}
+
+/* --- BOTÃO PREMIUM --- */
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px #242252;
+    transition: all 0.1s ease;
 }
 
-/* --- RESPONSIVIDADE (RNF01) --- */
-
-/* Configuração para Celulares Pequenos (Mobile-First) */
-@media (max-width: 480px) {
-    body {
-        padding: 10px; /* Menos espaço nas bordas para sobrar espaço pro formulário */
-    }
-
-    .container-login {
-        padding: 20px; /* Diminui o respiro interno no card */
-        width: 100%;   /* Ocupa a largura total disponível */
-        border-radius: 10px;
-    }
-
-    .logo-container h1 {
-        font-size: 2rem; /* Diminui um pouco o título no celular */
-    }
+.btn-primary:hover {
+    background-color: #43408a;
 }
 
-/* Configuração para Tablets e Desktops */
-@media (min-width: 769px) {
-    .container-login {
-        width: 450px; /* Trava o tamanho para não ficar "esticado" demais no PC */
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2); /* Sombra mais elegante no PC */
-    }
+.btn-primary:active {
+    box-shadow: 0 0 #242252;
+    transform: translateY(6px);
 }
+
+/* --- LINKS --- */
+.links-auxiliares {
+    margin-top: 25px;
+    font-size: 0.9rem;
+}
+
+.links-auxiliares p { color: #666; margin-bottom: 8px; }
+
+.links-auxiliares a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.links-auxiliares a:hover { text-decoration: underline; }
