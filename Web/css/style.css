@@ -102,27 +102,35 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(53, 51, 117, 0.1);
 }
 
-/* --- BOTÃO PREMIUM --- */
+/* --- BOTÃO PERSONALIZADO (LOGIN E CADASTRO) --- */
 .btn-primary {
     width: 100%;
     padding: 16px;
     margin-top: 10px;
+    
+    /* Cores iniciais solicitadas */
     background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
+    color: #F4E7BB;             /* Cor da letra creme */
+    border: 2px solid #F4E7BB;  /* Borda na cor creme */
+    
     border-radius: 12px;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 6px #242252;
-    transition: all 0.1s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-    background-color: #43408a;
+    background-color: #43408a; 
+    color: #F4E7BB;
 }
 
+/* EFEITO AO CLICAR (ACTIVE) */
 .btn-primary:active {
+    background-color: #ED3237 !important; /* Fica vermelho ao clicar */
+    border-color: #ED3237 !important;     /* Borda também muda para vermelho */
+    color: #ffffff;                       /* Letra branca para contraste no vermelho */
     box-shadow: 0 0 #242252;
     transform: translateY(6px);
 }
@@ -142,3 +150,45 @@ input:focus {
 }
 
 .links-auxiliares a:hover { text-decoration: underline; }
+/* --- LINKS --- */
+.links-auxiliares {
+    margin-top: 25px;
+    font-size: 0.9rem;
+}
+
+.links-auxiliares p { color: #666; margin-bottom: 8px; }
+
+.links-auxiliares a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.links-auxiliares a:hover { text-decoration: underline; }
+
+/* --- CONFIGURAÇÃO DE FUNDO DINÂMICO (CADASTRO) --- */
+
+body.bg-cadastro {
+    background-image: url('../assets/img/cadastro_mobile.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+@media (min-width: 768px) {
+    body.bg-cadastro {
+        background-image: url('../assets/img/cadastro_tablet.png');
+    }
+}
+
+@media (min-width: 1025px) {
+    body.bg-cadastro {
+        background-image: url('../assets/img/cadastro_desktop.png');
+    }
+}

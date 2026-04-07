@@ -6,38 +6,34 @@
     <title>Cadastro - COE UniEVANGÉLICA</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-
-    <main class="container-login">
-        <div class="logo-container">
+<body class="bg-cadastro"> <main class="container-login"> <div class="logo-container">
             <h1>Crie seu login</h1>
             <p>Preencha os dados abaixo para acessar a triagem.</p>
         </div>
 
-        <form action="/registrar" method="POST" class="form-card">
-            
-            <div class="input-group">
-                <label for="nome">Nome Completo</label>
-                <input type="text" id="nome" name="nome" placeholder="Seu nome aqui" required>
+        <form action="/registrar" method="POST" class="form-card" id="form-cadastro">
+            <div class="form-group">
+                <label for="username">Nome de Usuário</label>
+                <input type="text" id="username" name="username" placeholder="Insira seu nome de usuário" required>
             </div>
 
-            <div class="input-group">
+            <div class="form-group">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
             </div>
 
-            <div class="input-group">
+            <div class="form-group">
                 <label for="senha">Crie uma senha</label>
                 <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required>
             </div>
 
-            <div class="input-group">
+            <div class="form-group">
                 <label for="confirmar_senha">Repita a senha</label>
                 <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required>
             </div>
 
-            <button type="submit" class="btn-principal">ACEITAR</button>
-            
+            <button type="submit" class="btn-primary">ACEITAR</button>
+
             <div class="links-auxiliares">
                 <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
             </div>
