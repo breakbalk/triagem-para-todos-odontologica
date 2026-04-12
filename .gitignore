@@ -1,0 +1,7 @@
+# Dados locais gerados pela camada JSON (substituível por Supabase depois)
+Web/data/app_storage.json
+Web/data/app_storage.json.tmp
+
+# Python
+__pycache__/
+*.py[cod]

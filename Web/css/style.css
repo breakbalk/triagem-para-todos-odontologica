@@ -150,21 +150,6 @@ input:focus {
 }
 
 .links-auxiliares a:hover { text-decoration: underline; }
-/* --- LINKS --- */
-.links-auxiliares {
-    margin-top: 25px;
-    font-size: 0.9rem;
-}
-
-.links-auxiliares p { color: #666; margin-bottom: 8px; }
-
-.links-auxiliares a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 700;
-}
-
-.links-auxiliares a:hover { text-decoration: underline; }
 
 /* --- CONFIGURAÇÃO DE FUNDO DINÂMICO (CADASTRO) --- */
 
@@ -191,4 +176,221 @@ body.bg-cadastro {
     body.bg-cadastro {
         background-image: url('../assets/img/cadastro_desktop.png');
     }
+}
+
+/* ========== Telas logadas (home, triagem, admin) ========== */
+
+body.bg-app {
+    background: linear-gradient(160deg, #eef0ff 0%, #f9f1c8 100%);
+    min-height: 100vh;
+    color: #222;
+}
+
+.form-msg {
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 0.92rem;
+    text-align: left;
+}
+
+.msg-error {
+    background: #ffecec;
+    border: 1px solid #f5b5b5;
+    color: #8b1c1c;
+}
+
+.msg-success {
+    background: #e9f8ef;
+    border: 1px solid #9fd4b1;
+    color: #1b5e2a;
+}
+
+.container-wide {
+    max-width: 460px;
+}
+
+.form-plain {
+    text-align: left;
+}
+
+.app-header {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(53, 51, 117, 0.15);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+}
+
+.app-header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.app-header h1 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.app-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-nav {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--primary-color);
+    color: #f4e7bb !important;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-nav:hover {
+    filter: brightness(1.08);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--primary-color) !important;
+    border: 2px solid var(--primary-color);
+}
+
+.btn-admin {
+    background: #2e7d4a;
+}
+
+.user-pill {
+    font-size: 0.85rem;
+    color: #444;
+    margin-right: 8px;
+}
+
+.app-main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+}
+
+.card-panel {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.card-panel h2 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+}
+
+.lead {
+    margin-bottom: 16px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.list-triagens {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-triagens li {
+    padding: 12px 0;
+    border-bottom: 1px solid #e6e6f0;
+    text-align: left;
+}
+
+.empty-hint {
+    color: #666;
+    font-style: italic;
+}
+
+.form-stack .form-group {
+    margin-bottom: 16px;
+}
+
+.form-stack select,
+.form-stack textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.form-stack fieldset {
+    border: 1px dashed #ccc;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.radio-line {
+    display: block;
+    margin: 6px 0;
+    text-align: left;
+    font-weight: 500;
+}
+
+.resumo-box {
+    background: #f4f6ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 12px 0 20px;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.orientacoes {
+    margin-top: 18px;
+    text-align: left;
+}
+
+.orientacoes h3 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.orientacoes ul {
+    padding-left: 20px;
+    color: #333;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.admin-table th,
+.admin-table td {
+    border-bottom: 1px solid #e0e0e8;
+    padding: 8px 6px;
+    text-align: left;
+}
+
+.admin-table th {
+    color: var(--primary-color);
+    font-weight: 700;
 }

@@ -16,6 +16,17 @@ Atualmente, o processo de triagem é realizado de forma presencial ou por telefo
 
 Este sistema propõe uma solução digital simples e acessível para resolver esses problemas.
 
+**Planejamento e acompanhamento:** veja a pasta [`docs/`](./docs/README.md) (estado atual do repositório, lacunas e próximos passos web/mobile alinhados aos relatórios extensionistas).
+
+**Como rodar o projeto na sua máquina (web + mobile):** [`docs/COMO-RODAR-WEB-E-MOBILE.md`](./docs/COMO-RODAR-WEB-E-MOBILE.md).
+
+---
+
+## 📍 Status do desenvolvimento (abril/2026)
+
+- **Web:** telas de **login** e **cadastro** com estilo e validações em JavaScript; ativos de interface em `Web/assets/img/`. Backend Python, banco, triagem completa, painel admin e confirmação ainda precisam ser implementados ou integrados — detalhes em [`docs/ESTADO-ATUAL-E-GAPS.md`](./docs/ESTADO-ATUAL-E-GAPS.md).
+- **Mobile:** estrutura de pastas e nomes de telas criados; implementação e integração com API pendentes — ver [`docs/PLANEJAMENTO-MOBILE.md`](./docs/PLANEJAMENTO-MOBILE.md).
+
 ---
 
 ## 🎯 Objetivo
@@ -73,7 +84,7 @@ Frontend (HTML, CSS, JS)
 ↓
 Backend (Python API)
 ↓
-Banco de Dados (MySQL)
+Banco de Dados (Supabase / PostgreSQL)
 ```
 
 ---
@@ -110,7 +121,7 @@ Banco de Dados (MySQL)
 ### ⚙️ Backend
 
 * Python
-* MySQL
+* Supabase (PostgreSQL)
 
 ### 📱 Mobile
 
@@ -123,13 +134,14 @@ Banco de Dados (MySQL)
 ```text
 triagem-para-todos-odontologica/
 │
+├── docs/              ← planejamento, lacunas e próximos passos (web/mobile)
 ├── Mobile/
 ├── Web/
 │   ├── assets/
 │   ├── backend/
 │   ├── database/
 │   ├── pages/
-│   └── docs/
+│   └── docs/          ← diagramas/wireframes/evidências da disciplina web
 │
 └── README.md
 ```

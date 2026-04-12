@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel — Equipe COE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-app" data-page="admin">
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>Triagens recebidas</h1>
+            <nav class="app-nav">
+                <a href="/pages/home.html" class="btn-nav btn-ghost">← Voltar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <p id="msg" class="form-msg" hidden></p>
+        <div class="table-wrap">
+            <table id="admin-table" class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Protocolo</th>
+                        <th>ID usuário</th>
+                        <th>Paciente</th>
+                        <th>Telefone</th>
+                        <th>Serviço</th>
+                        <th>Período</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="/js/web-app.js" defer></script>
+</body>
+</html>

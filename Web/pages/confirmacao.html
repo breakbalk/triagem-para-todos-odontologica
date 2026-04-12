@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação - COE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-app" data-page="confirmacao">
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>Pré-agendamento</h1>
+            <nav class="app-nav">
+                <a href="/pages/home.html" class="btn-nav">Ir para início</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <section class="card-panel">
+            <!-- RF08 + RF09: resumo após envio; horário definitivo depende da equipe da clínica -->
+            <h2>Recebemos sua solicitação</h2>
+            <div id="resumo-triagem" class="resumo-box"></div>
+
+            <!-- RF10: orientações ao usuário -->
+            <div class="orientacoes">
+                <h3>Documentos necessários no atendimento</h3>
+                <ul>
+                    <li>Documento com foto (RG ou CNH);</li>
+                    <li>CPF;</li>
+                    <li>Cartão do SUS (se aplicável);</li>
+                    <li>Comprovante de residência recente.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/web-app.js" defer></script>
+</body>
+</html>

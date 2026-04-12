@@ -4,42 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - COE UniEVANGÉLICA</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-cadastro"> <main class="container-login"> <div class="logo-container">
+<body class="bg-cadastro" data-page="cadastro">
+
+    <main class="container-login">
+        <div class="logo-container">
             <h1>Crie seu login</h1>
-            <p>Preencha os dados abaixo para acessar a triagem.</p>
+            <p>Preencha os dados abaixo para acessar a triagem. (RF01)</p>
         </div>
 
-        <form action="/registrar" method="POST" class="form-card" id="form-cadastro">
+        <!-- RF01: cadastro; nome no id username por histórico do layout — enviado como "nome" na API -->
+        <form id="form-cadastro" class="form-card" novalidate>
+            <p id="msg" class="form-msg" hidden></p>
+
             <div class="form-group">
-                <label for="username">Nome de Usuário</label>
-                <input type="text" id="username" name="username" placeholder="Insira seu nome de usuário" required>
+                <label for="username">Nome completo</label>
+                <input type="text" id="username" name="username" placeholder="Seu nome" required minlength="3">
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone (WhatsApp)</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(62) 99999-0000">
             </div>
 
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required autocomplete="email">
             </div>
 
             <div class="form-group">
                 <label for="senha">Crie uma senha</label>
-                <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required>
+                <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
             </div>
 
             <div class="form-group">
                 <label for="confirmar_senha">Repita a senha</label>
-                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required>
+                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required autocomplete="new-password">
             </div>
 
             <button type="submit" class="btn-primary">ACEITAR</button>
 
             <div class="links-auxiliares">
-                <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+                <p>Já tem uma conta? <a href="/pages/login.html">Faça login</a></p>
             </div>
         </form>
     </main>
 
-    <script src="../js/script.js"></script>
+    <script src="/js/web-app.js" defer></script>
 </body>
 </html>

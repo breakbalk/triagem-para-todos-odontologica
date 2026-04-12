@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início - COE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-app" data-page="home">
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>COE — Triagem</h1>
+            <nav class="app-nav">
+                <span id="home-nome" class="user-pill"></span>
+                <a href="/pages/triagem.html" class="btn-nav">Nova triagem</a>
+                <a href="/pages/admin.html" id="link-admin" class="btn-nav btn-admin" style="display:none">Painel equipe</a>
+                <button type="button" class="btn-nav btn-ghost" id="btn-logout">Sair</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <p id="msg" class="form-msg" hidden></p>
+        <section class="card-panel">
+            <h2>Suas solicitações recentes</h2>
+            <ul id="lista-triagens" class="list-triagens"></ul>
+        </section>
+    </main>
+
+    <script>
+        /** Logout: chama API e volta ao login (evita patch grande no web-app.js). */
+        document.addEventListener('DOMContentLoaded', () => {
+            const b = document.getElementById('btn-logout');
+            if (!b) return;
+            b.addEventListener('click', async () => {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
+                window.location.href = '/pages/login.html';
+            });
+        });
+    </script>
+    <script src="/js/web-app.js" defer></script>
+</body>
+</html>

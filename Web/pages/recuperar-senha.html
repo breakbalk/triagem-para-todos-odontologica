@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar senha - COE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-login" data-page="recover">
+
+    <main class="container-login container-wide">
+        <div class="logo-container">
+            <h1>Recuperar senha</h1>
+            <p>RF03 — Informe seu e-mail. Em modo demonstração a API devolve um token na próxima tela.</p>
+        </div>
+
+        <p id="msg-recover" class="form-msg" hidden></p>
+
+        <div id="recover-step1">
+            <form id="form-recover-email" class="form-card form-plain">
+                <div class="form-group">
+                    <label for="recover-email">E-mail cadastrado</label>
+                    <input type="email" id="recover-email" required>
+                </div>
+                <button type="submit" class="btn-primary">ENVIAR</button>
+            </form>
+        </div>
+
+        <div id="recover-step2" hidden>
+            <form id="form-recover-reset" class="form-card form-plain">
+                <input type="hidden" id="recover-email-hidden">
+                <div class="form-group">
+                    <label for="recover-token">Token (demo)</label>
+                    <input type="text" id="recover-token" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="recover-nova-senha">Nova senha</label>
+                    <input type="password" id="recover-nova-senha" minlength="6" required>
+                </div>
+                <button type="submit" class="btn-primary">REDEFINIR</button>
+            </form>
+        </div>
+
+        <div class="links-auxiliares">
+            <p><a href="/pages/login.html">← Voltar ao login</a></p>
+        </div>
+    </main>
+
+    <script src="/js/web-app.js" defer></script>
+</body>
+</html>

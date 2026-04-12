@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova triagem - COE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-app" data-page="triagem">
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <h1>Nova triagem</h1>
+            <nav class="app-nav">
+                <a href="/pages/home.html" class="btn-nav btn-ghost">← Voltar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <section class="card-panel">
+            <p class="lead">RF04–RF06: preencha os dados para pré-agendamento. A equipe entrará em contato conforme disponibilidade.</p>
+
+            <form id="form-triagem" class="form-stack" novalidate>
+                <p id="msg" class="form-msg" hidden></p>
+
+                <div class="form-group">
+                    <label for="triagem-nome">Nome completo</label>
+                    <input type="text" id="triagem-nome" required minlength="3" placeholder="Nome do paciente">
+                </div>
+
+                <div class="form-group">
+                    <label for="triagem-telefone">Telefone</label>
+                    <input type="tel" id="triagem-telefone" required placeholder="(62) 99999-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="triagem-servico">Tipo de serviço (RF05)</label>
+                    <select id="triagem-servico" required>
+                        <option value="">Selecione...</option>
+                        <option value="tratamento_geral">Tratamento geral</option>
+                        <option value="protese">Prótese</option>
+                        <option value="pediatria">Pediatria</option>
+                        <option value="emergencia">Emergência</option>
+                    </select>
+                </div>
+
+                <fieldset class="form-group">
+                    <legend>Período de preferência (RF06)</legend>
+                    <label class="radio-line"><input type="radio" name="periodo" value="matutino"> Matutino</label>
+                    <label class="radio-line"><input type="radio" name="periodo" value="vespertino"> Vespertino</label>
+                    <label class="radio-line"><input type="radio" name="periodo" value="noturno"> Noturno</label>
+                </fieldset>
+
+                <div class="form-group">
+                    <label for="triagem-sintomas">Sintomas / observações (opcional)</label>
+                    <textarea id="triagem-sintomas" rows="3" placeholder="Descreva brevemente, se necessário"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">ENVIAR TRIAGEM</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="/js/web-app.js" defer></script>
+</body>
+</html>

@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - COE UniEVANGÉLICA</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <!-- Caminhos absolutos: funcionam quando o Flask serve a pasta Web/ na raiz -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-login">
+<body class="bg-login" data-page="login">
 
     <main class="container-login">
         <div class="logo-container">
@@ -14,26 +15,29 @@
             <p>Clínica Odontológica de Ensino</p>
         </div>
 
-        <form action="/login" method="POST" class="form-card">
+        <!-- Formulário enviado via JS (web-app.js) para /api/auth/login — RF02 -->
+        <form id="form-login" class="form-card" novalidate>
+            <p id="msg" class="form-msg" hidden></p>
+
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+                <input type="email" id="email" name="email" placeholder="exemplo@email.com" required autocomplete="username">
             </div>
 
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+                <input type="password" id="senha" name="senha" placeholder="Sua senha" required autocomplete="current-password">
             </div>
 
             <button type="submit" class="btn-primary">LOGIN</button>
 
             <div class="links-auxiliares">
-                <p>Ainda não tem cadastro? <a href="cadastro.html">Crie seu login</a></p>
-                <a href="recuperar-senha.html" class="link-esqueceu">Esqueceu a senha?</a>
+                <p>Ainda não tem cadastro? <a href="/pages/cadastro.html">Crie seu login</a></p>
+                <a href="/pages/recuperar-senha.html" class="link-esqueceu">Esqueceu a senha?</a>
             </div>
         </form>
     </main>
 
-    <script src="../js/script.js"></script>
+    <script src="/js/web-app.js" defer></script>
 </body>
 </html>
