@@ -18,6 +18,8 @@ Este sistema propõe uma solução digital simples e acessível para resolver es
 
 **Planejamento e acompanhamento:** veja a pasta [`docs/`](./docs/README.md) (estado atual do repositório, lacunas e próximos passos web/mobile alinhados aos relatórios extensionistas).
 
+**Como rodar o projeto na sua máquina (web + mobile):** [`docs/COMO-RODAR-WEB-E-MOBILE.md`](./docs/COMO-RODAR-WEB-E-MOBILE.md).
+
 ---
 
 ## 📍 Status do desenvolvimento (abril/2026)
