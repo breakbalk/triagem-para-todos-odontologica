@@ -1,0 +1,3 @@
+# Backend leve para desenvolvimento (sem Supabase nesta camada).
+flask>=3.0.0,<4
+werkzeug>=3.0.0,<4
