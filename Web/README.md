@@ -1,8 +1,6 @@
 # Pasta Web — Triagem Para Todos
 
-Frontend (HTML/CSS/JS) + **API Flask** para desenvolvimento **sem Supabase** (persistência local em JSON por enquanto).
-
-Quem implementar o banco: substitua `backend/storage.py` por integração com **Supabase** (ou consultas SQL ao Postgres) e chame essas funções a partir de `backend/app.py` (todas as URLs `/api/...` estão neste arquivo).
+Frontend (HTML/CSS/JS) + **API Flask**. A persistência pode ser **JSON local** (padrão) ou **Supabase (PostgreSQL)**.
 
 ## Rodar o sistema completo (recomendado)
 
@@ -17,9 +15,28 @@ O servidor sobe em **`0.0.0.0:5000`** por padrão (assim o **app mobile** na mes
 
 **Resposta do login/cadastro:** além de `user`, a API pode enviar `mobile_token` (usado pelo app React Native no header `Authorization`; o site web ignora esse campo).
 
+### Persistência: JSON (padrão)
+
+Sem arquivo `.env` ou com `COE_STORAGE=json`, os dados vão para `Web/data/app_storage.json` (ignorado no Git).
+
+### Persistência: Supabase
+
+1. No painel do Supabase, abra **SQL**:
+   - **Projeto novo / tabelas ainda não criadas:** rode [`supabase/schema.sql`](./supabase/schema.sql) inteiro.
+   - **`usuarios` e `triagens` já existem** (mesmo MER, podem estar vazias): rode só [`supabase/schema_auxiliar_flask.sql`](./supabase/schema_auxiliar_flask.sql) — cria `password_reset` e `mobile_token` e não mexe nas tabelas da equipe.  
+   Dados extras da triagem no app (nome, telefone, sintomas, status, protocolo) ficam em **`triagens.solicitacao_dados`** como JSON.
+2. Copie `Web/backend/.env.example` para `Web/backend/.env`.
+3. Preencha:
+   - `COE_STORAGE=supabase`
+   - `SUPABASE_URL` — URL do projeto (ex.: `https://xxxx.supabase.co`)
+   - `SUPABASE_KEY` — no Flask, use de preferência a chave **`service_role`** (*Project Settings → API*). Ela ignora RLS e é **secreta**: não coloque no mobile nem em repositório público. A chave **anon** só funciona se você criar políticas RLS permissivas (não recomendado para este backend).
+4. Rode `python app.py` de novo.
+
+Variáveis completas: ver `Web/backend/.env.example`.
+
 ### Usuário administrador de demonstração
 
-Na **primeira execução** é criado um admin (dados gravados em `Web/data/app_storage.json`, ignorado no git).
+Na **primeira execução** sem usuários no banco, é criado um admin.
 
 | Variável | Padrão |
 |----------|--------|
@@ -39,8 +56,9 @@ Com `COE_DEMO_RESET_TOKEN=1` (padrão), após informar o e-mail a API devolve um
 | `pages/` | Telas: login, cadastro, recuperar senha, home, triagem, confirmação, admin. |
 | `css/style.css` | Estilos globais + layout das telas logadas. |
 | `js/web-app.js` | Chamadas `fetch` à API e lógica por página (`data-page` no `<body>`). |
-| `backend/` | `app.py` (Flask + todas as rotas `/api`), `storage.py` (JSON). |
-| `data/` | Arquivo gerado localmente `app_storage.json` (não versionar). |
+| `backend/` | `app.py` (Flask), `storage.py` (escolhe JSON ou Supabase), `storage_json.py`, `storage_supabase.py`. |
+| `data/` | `app_storage.json` só no modo JSON (não versionar). |
+| `supabase/schema.sql` | DDL para criar tabelas no Supabase. |
 
 ## Só o front (sem API)
 
