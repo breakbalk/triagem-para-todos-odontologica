@@ -48,5 +48,6 @@ Se abrir HTML com `python -m http.server`, login e triagem **não funcionarão**
 
 ## Documentação do projeto
 
+- [`../docs/ENTREGAS-SPRINT-01-WEB.md`](../docs/ENTREGAS-SPRINT-01-WEB.md) — resumo das entregas da **Sprint 1** (web) para a equipe
 - [`../docs/PLANEJAMENTO-WEB.md`](../docs/PLANEJAMENTO-WEB.md)
 - [`../docs/ESTADO-ATUAL-E-GAPS.md`](../docs/ESTADO-ATUAL-E-GAPS.md)
