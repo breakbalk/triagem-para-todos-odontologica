@@ -1,3 +1,5 @@
-# Backend leve para desenvolvimento (sem Supabase nesta camada).
+# COE_STORAGE=json (padrão) ou supabase — veja Web/backend/.env.example
 flask>=3.0.0,<4
 werkzeug>=3.0.0,<4
+python-dotenv>=1.0.0
+supabase>=2.3.0,<3

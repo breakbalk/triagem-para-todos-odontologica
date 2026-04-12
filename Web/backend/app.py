@@ -22,6 +22,10 @@ _BACKEND = os.path.dirname(os.path.abspath(__file__))
 if _BACKEND not in sys.path:
     sys.path.insert(0, _BACKEND)
 
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(_BACKEND, ".env"))
+
 from flask import Flask, jsonify, redirect, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -59,18 +63,31 @@ def token_bearer():
     return auth[7:].strip()
 
 
+def _normaliza_id_usuario(uid):
+    """IDs numéricos (JSON local) ou UUID string (Supabase)."""
+    if uid is None:
+        return None
+    if isinstance(uid, int):
+        return uid
+    s = str(uid).strip()
+    try:
+        return int(s)
+    except ValueError:
+        return s
+
+
 def id_usuario_logado():
     """
     Quem está logado: cookie de sessão (navegador) OU token Bearer (mobile).
     """
     uid = session.get("user_id")
     if uid is not None:
-        return int(uid)
+        return _normaliza_id_usuario(uid)
     tok = token_bearer()
     if tok:
         u = storage.user_id_do_token_mobile(tok)
         if u is not None:
-            return int(u)
+            return _normaliza_id_usuario(u)
     return None
 
 

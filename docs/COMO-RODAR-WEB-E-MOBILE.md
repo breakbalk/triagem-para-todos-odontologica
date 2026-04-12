@@ -35,6 +35,8 @@ O site **não funciona** só abrindo o HTML no Explorer: as telas chamam a API (
    pip install -r requirements.txt
    ```
 
+   **Banco Supabase (opcional):** rode o SQL em `Web/supabase/schema.sql` no painel, copie `Web/backend/.env.example` para `.env`, defina `COE_STORAGE=supabase`, `SUPABASE_URL` e `SUPABASE_KEY` (de preferência `service_role` no servidor). Sem `.env`, o padrão continua sendo JSON em `Web/data/`.
+
 3. Inicie o servidor:
 
    ```bash
@@ -51,7 +53,7 @@ O site **não funciona** só abrindo o HTML no Explorer: as telas chamam a API (
 
 ### Credenciais de administrador (demonstração)
 
-Na primeira execução é criado um usuário admin (dados em `Web/data/app_storage.json`, arquivo local, não versionado).
+Na primeira execução é criado um usuário admin (JSON local **ou** Supabase, conforme `COE_STORAGE`).
 
 | | |
 |--|--|

@@ -2,6 +2,10 @@
 Web/data/app_storage.json
 Web/data/app_storage.json.tmp
 
+# Credenciais Supabase / Flask (nunca commitar)
+Web/backend/.env
+Web/.env
+
 # Python
 __pycache__/
 *.py[cod]
