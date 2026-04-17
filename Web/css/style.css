@@ -394,3 +394,127 @@ body.bg-app {
     color: var(--primary-color);
     font-weight: 700;
 }
+
+/* --- ESTILO HOME COE FINAL --- */
+
+/* 1. VÍDEO E MÁSCARA (Escurecimento garantido) */
+.video-container {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; z-index: -10;
+}
+#bg-video { width: 100%; height: 100%; object-fit: cover; }
+
+.overlay-fix {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.3) 100%) !important;
+}
+
+/* 2. CAMADA DE INTERFACE */
+.interface-layer {
+    position: relative; z-index: 10;
+    height: 100vh; width: 100%;
+    color: white; font-family: sans-serif;
+}
+
+/* 3. LOGOS GRANDES (O que você pediu) */
+.dente-topo {
+    height: 48px !important; /* Dente do topo bem maior */
+    margin-right: 12px;
+}
+
+.logo-main {
+    width: 320px !important; /* Logo da esquerda muito maior */
+    margin-bottom: 40px; /* Aumentado o espaço abaixo da logo */
+}
+
+/* 4. ALINHAMENTO DO TOPO */
+.header-home {
+    display: flex; justify-content: flex-end;
+    padding: 35px 50px;
+}
+.header-right { display: flex; align-items: center; gap: 20px; }
+
+/* 5. TEXTO E BOTÃO (Ajuste de espaço) */
+.main-layout {
+    padding: 0 10%;
+    height: 70vh;
+    display: flex; align-items: center;
+}
+
+.hero-text p { font-size: 1.2rem; margin-bottom: 15px; max-width: 450px; }
+
+.btn-triagem-coe {
+    display: inline-block;
+    background: #3b316d; color: #F4E7BB;
+    padding: 18px 45px; border: 2px solid #F4E7BB;
+    border-radius: 8px; text-decoration: none;
+    font-weight: bold; font-size: 1.2rem;
+    margin-top: 35px; /* ESPAÇO ENTRE TEXTO E BOTÃO */
+    margin-bottom: 40px;
+}
+
+.recent-requests h3 { font-size: 1.1rem; margin-bottom: 10px; opacity: 0.9; }
+.recent-requests p { font-size: 0.9rem; opacity: 0.7; }
+
+/* 6. MÉDICOS (MENORES E NO CHÃO) */
+.mario-decor {
+    position: absolute;
+    bottom: 0; right: 5%;
+    height: 50vh !important; /* REDUZIDO para não cobrir tudo */
+    z-index: -1; /* Fica atrás do texto se eles se cruzarem */
+}
+
+/* BOTÕES AUXILIARES */
+.btn-panel { background: #4a8c53; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+.btn-exit { background: white; color: #3b316d; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+
+/* --- AJUSTES PARA TABLET (TELAS ATÉ 1024px) --- */
+@media (max-width: 1024px) {
+    
+    /* Diminui a imagem de decoração para não cobrir o texto */
+    .mario-decor {
+        height: 35vh !important; /* Reduz de 50vh para 35vh */
+        right: 2%; /* Aproxima um pouco mais da borda */
+    }
+
+    /* Ajusta o tamanho da logo principal para não ficar gigante no tablet */
+    .logo-main {
+        width: 240px !important; 
+        margin-bottom: 25px;
+    }
+
+    /* Melhora o respiro do conteúdo lateral */
+    .main-layout {
+        padding: 0 5%;
+    }
+
+    /* Diminui um pouco o botão para caber melhor */
+    .btn-triagem-coe {
+        padding: 15px 30px;
+        font-size: 1rem;
+        margin-top: 20px;
+    }
+    
+    /* Ajusta o dente do topo para não empurrar os botões */
+    .dente-topo {
+        height: 35px !important;
+    }
+}
+
+/* --- AJUSTE EXTRA PARA CELULARES (TELAS ATÉ 768px) --- */
+@media (max-width: 768px) {
+    .mario-decor {
+        display: none; /* Em celulares muito pequenos, é melhor esconder a decoração para focar no botão */
+    }
+    
+    .content-left {
+        text-align: center; /* Centraliza tudo no celular */
+        margin: 0 auto;
+    }
+    
+    .header-home {
+        padding: 20px;
+        justify-content: center;
+    }
+}

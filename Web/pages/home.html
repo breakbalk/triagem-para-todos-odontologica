@@ -6,39 +6,46 @@
     <title>Início - COE</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-app" data-page="home">
+<body data-page="home">
 
-    <header class="app-header">
-        <div class="app-header-inner">
-            <h1>COE — Triagem</h1>
-            <nav class="app-nav">
-                <span id="home-nome" class="user-pill"></span>
-                <a href="/pages/triagem.html" class="btn-nav">Nova triagem</a>
-                <a href="/pages/admin.html" id="link-admin" class="btn-nav btn-admin" style="display:none">Painel equipe</a>
-                <button type="button" class="btn-nav btn-ghost" id="btn-logout">Sair</button>
-            </nav>
-        </div>
-    </header>
+    <div class="video-container">
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="/assets/video/home_video.mp4" type="video/mp4">
+        </video>
+        <div class="overlay-fix"></div>
+    </div>
 
-    <main class="app-main">
-        <p id="msg" class="form-msg" hidden></p>
-        <section class="card-panel">
-            <h2>Suas solicitações recentes</h2>
-            <ul id="lista-triagens" class="list-triagens"></ul>
-        </section>
-    </main>
+    <div class="interface-layer">
+        
+        <header class="header-home">
+            <div class="header-right">
+                <img src="/assets/img/home_dente.png" alt="Dente" class="dente-topo">
+                <span class="admin-label">Administrador COE</span>
+                <a href="/pages/admin.html" class="btn-panel">Painel equipe</a>
+                <a href="#" class="btn-exit">Sair</a>
+            </div>
+        </header>
 
-    <script>
-        /** Logout: chama API e volta ao login (evita patch grande no web-app.js). */
-        document.addEventListener('DOMContentLoaded', () => {
-            const b = document.getElementById('btn-logout');
-            if (!b) return;
-            b.addEventListener('click', async () => {
-                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' } });
-                window.location.href = '/pages/login.html';
-            });
-        });
-    </script>
-    <script src="/js/web-app.js" defer></script>
+        <main class="main-layout">
+            <div class="content-left">
+                <img src="/assets/img/coe_logo.png" alt="Logo COE" class="logo-main">
+                
+                <div class="hero-text">
+                    <p>Especialistas em Sorrisos - Resolvemos seus problemas com Estilo!</p>
+                    <p>Apresentamos a você a triagem mais moderna da região.</p>
+                </div>
+
+                <a href="/pages/triagem.html" class="btn-triagem-coe">NOVA TRIAGEM</a>
+
+                <div class="recent-requests">
+                    <h3>Suas solicitações recentes</h3>
+                    <p>Você ainda não enviou triagens. Clique em «Nova triagem».</p>
+                </div>
+            </div>
+        </main>
+
+        <img src="/assets/img/home_decoracao.png" alt="Decoração" class="mario-decor">
+    </div>
+
 </body>
 </html>
