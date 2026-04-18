@@ -518,3 +518,45 @@ body.bg-app {
         justify-content: center;
     }
 }
+
+/* --- NOVOS ELEMENTOS DO TOPO (CENTRALIZADOS) --- */
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+.icon-whatsapp {
+    /* Altura igualada ao dente amarelo do topo */
+    height: 48px !important; 
+    width: auto;
+    transition: transform 0.2s;
+}
+
+.icon-whatsapp:hover {
+    transform: scale(1.1);
+}
+
+.menu-docs {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.menu-docs:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Garante que o bloco da direita não seja empurrado pelo centro absoluto */
+.header-right {
+    margin-left: auto; 
+}
