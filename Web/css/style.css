@@ -560,3 +560,54 @@ body.bg-app {
 .header-right {
     margin-left: auto; 
 }
+
+/* APLICA APENAS EM TELAS GRANDES (DESKTOP) */
+@media (min-width: 1025px) {
+    .content-left {
+        display: flex;
+        flex-direction: column;
+        /* Centraliza os filhos (logo e texto) um em relação ao outro */
+        align-items: center; 
+        /* Mantém o bloco todo alinhado à esquerda da tela */
+        margin-left: 0;
+        width: 640px; /* Largura da logo para servir de guia */
+    }
+
+    .logo-main {
+        width: 640px !important;
+        height: auto;
+        margin-bottom: 30px;
+        display: block;
+    }
+
+    /* Garante que os textos e o botão também se alinhem ao centro desse bloco de 640px */
+    .content-left h1, 
+    .content-left p, 
+    .content-left .solicitacoes-info {
+        text-align: center;
+        width: 100%;
+    }
+
+    .btn-triagem-coe {
+        margin-top: 20px;
+        align-self: center; /* Centraliza o botão especificamente */
+    }
+}
+
+@media (min-width: 1025px) {
+    .main-layout {
+        /* Reduzimos o recuo drasticamente para aproximar da borda */
+        padding-left: 20px !important; 
+        padding-right: 5% !important;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .content-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        margin-left: 0;
+        width: 640px; /* Mantém a largura da logo gigante */
+    }
