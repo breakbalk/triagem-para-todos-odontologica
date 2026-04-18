@@ -471,34 +471,56 @@ body.bg-app {
 
 /* --- AJUSTES PARA TABLET (TELAS ATÉ 1024px) --- */
 @media (max-width: 1024px) {
-    
-    /* Diminui a imagem de decoração para não cobrir o texto */
+    /* 1. HEADER ORGANIZADO EM COLUNA NA DIREITA */
+    .header-home {
+        padding: 20px 30px;
+        align-items: flex-start; /* Alinha tudo no topo */
+    }
+
+    .header-right {
+        display: flex;
+        flex-direction: column; /* Botões um embaixo do outro */
+        align-items: flex-end;   /* Alinha tudo na extremidade direita */
+        gap: 10px;
+    }
+
+    /* Posiciona o Whats/Docs logo abaixo do botão 'Sair' */
+    .header-center {
+        position: static; /* Sai do absoluto para seguir o fluxo */
+        transform: none;
+        display: flex;
+        flex-direction: row; 
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px; /* Distância do bloco de cima */
+    }
+
+    .icon-whatsapp {
+        height: 35px !important; 
+    }
+
+    .menu-docs {
+        font-size: 0.9rem;
+        color: #F4E7BB; /* Cor de destaque para facilitar leitura */
+    }
+
+    /* 2. IMAGEM DE DECORAÇÃO (MUITO MAIS DISCRETA) */
     .mario-decor {
-        height: 35vh !important; /* Reduz de 50vh para 35vh */
-        right: 2%; /* Aproxima um pouco mais da borda */
+        height: 20vh !important; /* Mantém o tamanho discreto */
+        bottom: 20px; /* Mantém próximo ao chão */
+        right: 20px; /* Mantém na borda direita */
     }
 
-    /* Ajusta o tamanho da logo principal para não ficar gigante no tablet */
+    /* 3. LOGO E TEXTO */
     .logo-main {
-        width: 240px !important; 
-        margin-bottom: 25px;
+        width: 300px !important;
+        margin-bottom: 20px;
     }
 
-    /* Melhora o respiro do conteúdo lateral */
     .main-layout {
-        padding: 0 5%;
-    }
-
-    /* Diminui um pouco o botão para caber melhor */
-    .btn-triagem-coe {
-        padding: 15px 30px;
-        font-size: 1rem;
-        margin-top: 20px;
-    }
-    
-    /* Ajusta o dente do topo para não empurrar os botões */
-    .dente-topo {
-        height: 35px !important;
+        padding-left: 30px !important;
+        align-items: flex-start;
+        padding-top: 50px;
     }
 }
 
