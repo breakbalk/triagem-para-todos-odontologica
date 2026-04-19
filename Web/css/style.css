@@ -635,3 +635,123 @@ body.bg-app {
     }
 }
 
+
+/* ============================================================
+   SOLUÇÃO DEFINITIVA: REORGANIZAÇÃO POR CLASSES REAIS
+   ============================================================ */
+@media (max-width: 480px) {
+    /* 1. CONTAINER PAI - FORÇA O FLUXO VERTICAL */
+    .interface-layer {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 5px !important;
+    }
+
+    /* 2. BLOCO ADM (PAINEL / SAIR) - MANDA PRO TOPO MÁXIMO */
+    .header-right {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        position: relative !important;
+        top: 0 !important; /* Garante que ele fique no topo */
+        margin-bottom: 10px !important; 
+        z-index: 20 !important;
+    }
+
+    .btn-painel, .btn-sair {
+        background: none !important;
+        border: none !important;
+        color: #F4E7BB !important;
+        text-decoration: underline !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+    }
+
+    /* 3. BLOCO DO WHATSAPP E DOCS - OBRIGA A DESCER */
+    .header-home, .header-center {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        position: relative !important;
+        margin-top: 5px !important; /* Espaço após o Painel */
+        margin-bottom: 15px !important;
+        z-index: 10 !important;
+    }
+
+    /* LIMPANDO O LINK DO WHATSAPP */
+    .whatsapp-link, .menu-docs {
+        display: flex !important;
+        align-items: center !important;
+        position: relative !important;
+        top: 0 !important; /* Zera qualquer empurrão fixo */
+        background: none !important;
+        border: none !important;
+        color: #F4E7BB !important;
+        text-decoration: underline !important;
+        font-size: 15px !important;
+    }
+
+    .icon-whatsapp {
+        position: static !important;
+        width: 20px !important;
+        height: auto !important;
+        margin-right: 8px !important;
+        display: inline-block !important;
+    }
+
+    /* 4. BLOCO COE (LOGO + TRIAGEM) */
+    .main-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin-top: 0 !important;
+    }
+
+    .logo-main {
+        width: 120px !important; /* Ajustado para caber o rodapé */
+        height: auto !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* 5. MATA O DENTE DOURADO E QUALQUER LIXO */
+    .dente-topo, .mario-decor, .admin-label, [class*="dente"], [src*="dente"] {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 1. SOBE O BLOCO DO COE (LOGO + BOTÃO) SEM TOCAR NO TOPO */
+    .main-layout {
+        margin-top: -60px !important; /* Puxa o bloco central para cima */
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    /* 2. AJUSTE DE ALTURA DA LOGO PARA LIBERAR O RODAPÉ */
+    .logo-main {
+        width: 105px !important; /* Reduz de leve para o conteúdo de baixo subir */
+        height: auto !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* 3. COMPACTA OS TEXTOS INTERNOS */
+    .text-container p {
+        margin: 2px 0 !important;
+        font-size: 13px !important;
+        line-height: 1.1 !important;
+    }
+
+    /* 4. GARANTE QUE AS SOLICITAÇÕES RECENTES FIQUEM VISÍVEIS */
+    .recent-requests {
+        margin-top: 5px !important;
+        padding-bottom: 15px !important;
+    }
+
+    /* 5. REMOVE DEFINITIVAMENTE O DENTE DOURADO */
+    .dente-topo, [class*="dente"], [src*="dente"] {
+        display: none !important;
+    }
+}
