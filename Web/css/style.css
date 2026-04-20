@@ -882,3 +882,48 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-primary:active { transform: scale(0.98); }
+
+/* RESET E PADRONIZAÇÃO TOTAL DO BOTÃO DA HOME */
+.interface-layer .main-layout .btn-triagem-coe {
+    /* Remove o azul claro do Mobile (Chrome/Safari) */
+    -webkit-tap-highlight-color: transparent !important;
+    
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: none !important;
+    text-decoration: none !important;
+    outline: none !important;
+    
+    /* Estética Imponente */
+    background-color: #3b3b6d !important;
+    color: #ffffff !important;
+    padding: 18px 40px !important;
+    border-radius: 12px !important;
+    font-size: 17px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    box-shadow: 0 6px 15px rgba(59, 59, 109, 0.3) !important;
+    
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+}
+
+/* Efeito Hover (Desktop) */
+@media (diverse-pointers: fine) {
+    .interface-layer .main-layout .btn-triagem-coe:hover {
+        background-color: #2a2a4e !important;
+        transform: translateY(-2px) !important;
+    }
+}
+
+/* EFEITO AO CLICAR (Para Mobile e Desktop) */
+/* Se você quer um feedback visual forte como o "vermelho" que mencionou,
+   vamos usar uma variação de cor bem nítida no clique */
+.interface-layer .main-layout .btn-triagem-coe:active {
+    background-color: #e74c3c !important; /* Vermelho vibrante para feedback de clique */
+    transform: scale(0.95) !important;
+    box-shadow: inset 0 3px 7px rgba(0,0,0,0.3) !important;
+    transition: none !important; /* Resposta imediata ao toque */
+}
