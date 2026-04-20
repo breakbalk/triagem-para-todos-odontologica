@@ -10,7 +10,6 @@
 
     <header class="app-header">
         <div class="app-header-inner">
-            <h1>Nova triagem</h1>
             <nav class="app-nav">
                 <a href="/pages/home.html" class="btn-nav btn-ghost">← Voltar</a>
             </nav>
@@ -19,14 +18,17 @@
 
     <main class="app-main">
         <section class="card-panel">
-            <p class="lead">RF04–RF06: preencha os dados para pré-agendamento. A equipe entrará em contato conforme disponibilidade.</p>
+            <div class="header-card">
+                <h2>NOVA TRIAGEM</h2>
+                <p class="instrucao">Preencha os dados abaixo para realizar seu pré-agendamento.</p>
+            </div>
 
             <form id="form-triagem" class="form-stack" novalidate>
                 <p id="msg" class="form-msg" hidden></p>
 
                 <div class="form-group">
                     <label for="triagem-nome">Nome completo</label>
-                    <input type="text" id="triagem-nome" required minlength="3" placeholder="Nome do paciente">
+                    <input type="text" id="triagem-nome" required minlength="3" placeholder="Digite seu nome">
                 </div>
 
                 <div class="form-group">
@@ -34,30 +36,33 @@
                     <input type="tel" id="triagem-telefone" required placeholder="(62) 99999-0000">
                 </div>
 
-                <div class="form-group">
-                    <label for="triagem-servico">Tipo de serviço (RF05)</label>
+                <div class="form-group grid-full">
+                    <label for="triagem-servico">Tipo de serviço</label>
                     <select id="triagem-servico" required>
-                        <option value="">Selecione...</option>
+                        <option value="">Selecione a especialidade...</option>
                         <option value="tratamento_geral">Tratamento geral</option>
                         <option value="protese">Prótese</option>
-                        <option value="pediatria">Pediatria</option>
+                        <option value="pediatria">Pediatria (6 a 12 anos)</option>
                         <option value="emergencia">Emergência</option>
                     </select>
+                    <small class="helper-text">* Pediatria: Atendimento restrito a crianças de 6 a 12 anos.</small>
                 </div>
 
-                <fieldset class="form-group">
-                    <legend>Período de preferência (RF06)</legend>
-                    <label class="radio-line"><input type="radio" name="periodo" value="matutino"> Matutino</label>
-                    <label class="radio-line"><input type="radio" name="periodo" value="vespertino"> Vespertino</label>
-                    <label class="radio-line"><input type="radio" name="periodo" value="noturno"> Noturno</label>
+                <fieldset class="form-group grid-full">
+                    <legend>Período de preferência</legend>
+                    <div class="radio-group-inline">
+                        <label class="radio-line"><input type="radio" name="periodo" value="matutino" required> Matutino</label>
+                        <label class="radio-line"><input type="radio" name="periodo" value="vespertino"> Vespertino</label>
+                        <label class="radio-line"><input type="radio" name="periodo" value="noturno"> Noturno</label>
+                    </div>
                 </fieldset>
 
-                <div class="form-group">
+                <div class="form-group grid-full">
                     <label for="triagem-sintomas">Sintomas / observações (opcional)</label>
-                    <textarea id="triagem-sintomas" rows="3" placeholder="Descreva brevemente, se necessário"></textarea>
+                    <textarea id="triagem-sintomas" rows="3" placeholder="Algo que queira nos adiantar?"></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary">ENVIAR TRIAGEM</button>
+                <button type="submit" class="btn-primary grid-full">ENVIAR TRIAGEM</button>
             </form>
         </section>
     </main>

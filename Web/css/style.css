@@ -755,3 +755,130 @@ body.bg-app {
         display: none !important;
     }
 }
+
+/* --- TELA DE TRIAGEM --- */
+body[data-page="triagem"] {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-image: url('../assets/img/triagem_mobile.png'); 
+}
+
+@media (min-width: 1024px) {
+    body[data-page="triagem"] { background-image: url('../assets/img/triagem_desktop.png'); }
+}
+
+/* --- CARD --- */
+.card-panel {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 45px; /* Aumentado para dar mais destaque */
+    margin: 40px auto;
+    width: 90%;
+    max-width: 750px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    box-sizing: border-box;
+}
+
+/* --- CABEÇALHO IMPONENTE (PADRÃO CADASTRO) --- */
+.header-card {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.header-card h2 {
+    color: #3b3b6d;
+    font-size: 32px; /* Maior e mais forte */
+    margin: 0 0 12px 0;
+    font-weight: 900; /* Extra bold */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.header-card .instrucao {
+    color: #444; /* Cor mais forte para não perder o foco */
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* --- GRID E FORMULÁRIO --- */
+@media (min-width: 768px) {
+    .form-stack {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+    .grid-full { grid-column: span 2; }
+}
+
+.form-group { display: flex; flex-direction: column; margin-bottom: 18px; }
+
+.form-group label {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #222;
+}
+
+input[type="text"], input[type="tel"], select, textarea {
+    padding: 14px;
+    border: 2px solid #eee; /* Borda levemente mais grossa para foco */
+    border-radius: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #3b3b6d;
+    outline: none;
+}
+
+/* --- RÁDIOS E PERÍODO --- */
+.radio-group-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-top: 5px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.radio-line { display: flex !important; align-items: center !important; gap: 10px; cursor: pointer; font-weight: 600 !important; }
+
+.radio-line input[type="radio"] { width: 20px; height: 20px; }
+
+/* --- BOTÃO DE ENVIO (PADRÃO CADASTRO) --- */
+.btn-primary {
+    background-color: #3b3b6d;
+    color: white;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 17px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(59, 59, 109, 0.3);
+    transition: transform 0.2s, background 0.3s;
+}
+
+@media (min-width: 768px) {
+    .btn-primary {
+        grid-column: span 2;
+        justify-self: center;
+        width: 100%;
+        max-width: 350px;
+    }
+}
+
+.btn-primary:active { transform: scale(0.98); }
