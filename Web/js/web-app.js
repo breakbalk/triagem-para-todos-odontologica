@@ -288,6 +288,13 @@ async function iniciarHome() {
 // --- TRIAGEM ---
 
 async function iniciarTriagem() {
+  // Procure onde você inicializa a página de triagem e adicione:
+var campoTel = document.getElementById("triagem-telefone");
+if (campoTel) {
+  campoTel.addEventListener("input", function() {
+    mascaraTelefone(this);
+  });
+}
   var user = await precisaEstarLogado();
   if (!user) return;
 
@@ -297,6 +304,12 @@ async function iniciarTriagem() {
   form.addEventListener("submit", async function (ev) {
     ev.preventDefault();
     esconderMsg();
+    var telValue = document.getElementById("triagem-telefone").value;
+// RN09: Validação severa no front
+if (telValue.length < 15) {
+  alert("Por favor, informe o telefone completo no formato (DD) 99999-9999");
+  return; 
+}
 
     var periodoRadio = document.querySelector('input[name="periodo"]:checked');
     var periodo = periodoRadio ? periodoRadio.value : "";
@@ -444,3 +457,19 @@ function iniciar() {
 }
 
 document.addEventListener("DOMContentLoaded", iniciar);
+
+/**
+ * Aplica a máscara (00) 00000-0000 no input de telefone
+ */
+function mascaraTelefone(input) {
+  var v = input.value.replace(/\D/g, ""); // Remove tudo que não é dígito
+  if (v.length > 11) v = v.slice(0, 11); // Limita a 11 dígitos (DD + 9 números)
+
+  if (v.length > 2) {
+    v = "(" + v.substring(0, 2) + ") " + v.substring(2);
+  }
+  if (v.length > 10) {
+    v = v.substring(0, 10) + "-" + v.substring(10);
+  }
+  input.value = v;
+}
