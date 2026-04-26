@@ -9,7 +9,7 @@ create table if not exists public.usuarios (
   nome varchar not null,
   email varchar not null unique,
   senha text not null,
-  telefone varchar,
+  telefone varchar(15),
   data_criacao timestamptz default now()
 );
 

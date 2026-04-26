@@ -15,6 +15,7 @@ Fluxo:
 """
 
 import os
+import re
 import sys
 
 # Pasta onde está este arquivo (backend/)
@@ -40,6 +41,13 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "troque-em-producao")
 # --- listas fixas (mesmo significado do relatório do projeto) ---
 SERVICOS_OK = ["tratamento_geral", "protese", "pediatria", "emergencia"]
 PERIODOS_OK = ["matutino", "vespertino", "noturno"]
+
+# RN09 — mesmo formato da máscara no front: (DD) 99999-9999 (15 caracteres).
+_TELEFONE_RN09 = re.compile(r"^\(\d{2}\) \d{5}-\d{4}$")
+
+
+def telefone_valido_rn09(valor):
+    return bool(_TELEFONE_RN09.match((valor or "").strip()))
 
 
 def usuario_publico(u):
@@ -266,8 +274,8 @@ def api_triagem_nova():
 
     if len(nome) < 3:
         return jsonify({"ok": False, "error": "Informe o nome completo."}), 400
-    if len(telefone) < 8:
-        return jsonify({"ok": False, "error": "Telefone inválido."}), 400
+    if not telefone_valido_rn09(telefone):
+        return jsonify({"ok": False, "error": "Formato de telefone inválido. Use (DD) 99999-9999."}), 400
     if servico not in SERVICOS_OK:
         return jsonify({"ok": False, "error": "Serviço inválido."}), 400
     if periodo not in PERIODOS_OK:
