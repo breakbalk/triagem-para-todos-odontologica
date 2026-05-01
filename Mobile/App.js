@@ -16,6 +16,8 @@ import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import RecoverPasswordScreen from "./src/screens/RecoverPasswordScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import TriageScreen from "./src/screens/TriageScreen";
+import SuccessScreen from "./src/screens/SuccessScreen";
 
 import * as api from "./src/services/api";
 
@@ -82,6 +84,8 @@ export default function App() {
           <Stack.Screen name="Cadastro" component={RegisterScreen} options={{ title: "Nova conta" }} />
           <Stack.Screen name="Recuperar" component={RecoverPasswordScreen} options={{ title: "Recuperar senha" }} />
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Início", headerBackVisible: false }} />
+          <Stack.Screen name="Triage" component={TriageScreen} options={{ title: "Nova triagem" }} />
+          <Stack.Screen name="Success" component={SuccessScreen} options={{ title: "Confirmação", headerLeft: function () { return null; } }} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

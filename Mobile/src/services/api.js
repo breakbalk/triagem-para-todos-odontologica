@@ -115,3 +115,19 @@ export async function quemSou() {
   if (!t) return { okHttp: true, dados: { ok: false, user: null } };
   return await getJSON("/api/auth/me", t);
 }
+
+export async function criarTriagem(corpo) {
+  var t = await lerToken();
+  if (!t) {
+    return { okHttp: false, dados: { ok: false, error: "Sessão expirada. Faça login novamente." } };
+  }
+  return await postJSON("/api/triagem", corpo, t);
+}
+
+export async function listarMinhasTriagens() {
+  var t = await lerToken();
+  if (!t) {
+    return { okHttp: false, dados: { ok: false, error: "Sessão expirada. Faça login novamente." } };
+  }
+  return await getJSON("/api/triagem/minhas", t);
+}

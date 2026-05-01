@@ -8,4 +8,6 @@ export const ROTAS = {
   Cadastro: "Cadastro",
   Recuperar: "Recuperar",
   Home: "Home",
+  Triage: "Triage",
+  Success: "Success",
 };
