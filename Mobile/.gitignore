@@ -1,6 +1,7 @@
 node_modules/
 .expo/
 dist/
+.expo-test-export/
 *.log
 .env
 .env.local
