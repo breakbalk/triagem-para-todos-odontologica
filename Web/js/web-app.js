@@ -441,7 +441,7 @@ async function iniciarAdmin() {
       "</td>";
     tbody.appendChild(tr);
   }
-}
+} // 4. Fecha a função iniciarAdmin()
 
 /** Ponto de entrada: roda depois que o HTML carregou. */
 function iniciar() {
@@ -473,3 +473,16 @@ function mascaraTelefone(input) {
   }
   input.value = v;
 }
+
+// Filtro Global: Fica fora de qualquer função para não dar erro de chaves
+document.addEventListener("keyup", (event) => {
+    if (event.target.id === "admin-search") {
+        const termo = event.target.value.toLowerCase();
+        const linhas = document.querySelectorAll("#admin-table tbody tr");
+
+        linhas.forEach(linha => {
+            const texto = linha.innerText.toLowerCase();
+            linha.style.display = texto.includes(termo) ? "" : "none";
+        });
+    }
+});
