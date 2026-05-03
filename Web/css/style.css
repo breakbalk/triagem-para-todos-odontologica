@@ -940,54 +940,98 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* --- FUNDOS RESPONSIVOS PAINEL ADMIN --- */
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-/* Padrão Mobile (Celulares) */
 body[data-page="admin"] {
     background-image: url('../assets/img/painel_mobile.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+    min-height: 100vh;
 }
 
-/* Tablet (Telas a partir de 768px) */
 @media (min-width: 768px) {
-    body[data-page="admin"] {
-        background-image: url('../assets/img/painel_tablet.png');
-    }
+    body[data-page="admin"] { background-image: url('../assets/img/painel_tablet.png'); }
 }
 
-/* Desktop (Computadores - a partir de 1024px) */
 @media (min-width: 1024px) {
-    body[data-page="admin"] {
-        background-image: url('../assets/img/painel_desktop.png');
-    }
+    body[data-page="admin"] { background-image: url('../assets/img/painel_desktop.png'); }
 }
 
-/* --- ESTILO DA TABELA (Ajuste baseado na sua imagem) --- */
+/* --- HEADER --- */
+.app-header {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.app-header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- CONTAINER DA TABELA --- */
 .table-wrap {
-    background-color: rgba(255, 255, 255, 0.9); /* Fundo branco semi-transparente para leitura */
+    background-color: #ffffff; /* Fundo branco sólido para contraste total */
     border-radius: 12px;
-    padding: 20px;
-    margin-top: 30px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    overflow-x: auto; /* Garante scroll se a tabela for maior que a tela */
+    padding: 10px;
+    margin: 0 auto 30px auto;
+    width: 95%; /* Ocupa quase toda a largura da tela */
+    max-width: 1400px; /* Mas não estica infinitamente em monitores gigantes */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Scroll apenas se necessário */
 }
 
+/* --- ESTILO DA TABELA --- */
 .admin-table {
-    width: 100%;
+    width: 100%; /* No Desktop ela vai ocupar todo o espaço branco */
     border-collapse: collapse;
-    font-size: 0.9rem;
+    min-width: 850px; /* No Mobile ela mantém esse tamanho e ativa o scroll lateral */
 }
 
 .admin-table th {
-    border-bottom: 2px solid #e0e0e0;
-    padding: 12px;
+    background-color: #f8fafc;
+    color: #334155;
     text-align: left;
-    color: #2c3e50;
+    padding: 18px 15px;
+    font-weight: 700;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 0.85rem;
 }
 
 .admin-table td {
-    padding: 12px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+.admin-table tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* --- BOTÃO VOLTAR --- */
+.btn-nav {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 2px solid #1a365d;
+    color: #1a365d;
+    transition: 0.2s;
+}
+
+.btn-nav:hover {
+    background-color: #1a365d;
+    color: #fff;
 }
