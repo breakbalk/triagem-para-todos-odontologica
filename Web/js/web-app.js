@@ -503,11 +503,28 @@ function formatarStatus(status, protocolo) {
     return html;
 }
 
-function atualizarStatusBanco(protocolo, novoStatus) {
-    console.log(`Atualizando triagem ${protocolo} para: ${novoStatus}`);
-    
-    // Aqui na Sprint 3 você fará o fetch para o backend Python
-    // Exemplo: fetch('/atualizar_status', { method: 'POST', body: ... })
-    
-    alert(`Status da triagem ${protocolo} alterado para ${novoStatus}!`);
+async function atualizarStatusBanco(protocolo, novoStatus) {
+    try {
+        // Esta é a parte vital: o envio dos dados para o seu app.py
+        const resposta = await fetch('http://127.0.0.1:5000/atualizar_status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                protocolo: protocolo,
+                status: novoStatus
+            })
+        });
+
+        if (resposta.ok) {
+            alert(`Sucesso! Status da triagem ${protocolo} atualizado.`);
+        } else {
+            throw new Error("Erro no servidor");
+        }
+    } catch (error) {
+        // Se o servidor Python não estiver rodando, o Front avisa aqui
+        console.error("Falha na comunicação:", error);
+        alert("Não foi possível salvar. Verifique se o servidor está rodando.");
+    }
 }
