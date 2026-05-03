@@ -1096,3 +1096,8 @@ body[data-page="admin"] {
     outline: none;
     border-color: #007bff;
 }
+/* No seu style.css */
+.admin-table th:nth-child(7), 
+.admin-table td:nth-child(7) {
+    min-width: 140px; /* Garante espaço para o select e a seta */
+}

@@ -473,8 +473,18 @@ document.addEventListener("keyup", (event) => {
         const linhas = document.querySelectorAll("#admin-table tbody tr");
 
         linhas.forEach(linha => {
-            const texto = linha.innerText.toLowerCase();
-            linha.style.display = texto.includes(termo) ? "" : "none";
+            const celulas = Array.from(linha.querySelectorAll("td"));
+            
+            // Pegamos o texto de todas as células, mas tratamos a do Status (índice 6) diferente
+            const textoBusca = celulas.map((td, index) => {
+                if (index === 6) { // Coluna do Status
+                    const select = td.querySelector("select");
+                    return select ? select.options[select.selectedIndex].text : "";
+                }
+                return td.innerText;
+            }).join(" ").toLowerCase();
+
+            linha.style.display = textoBusca.includes(termo) ? "" : "none";
         });
     }
 });
