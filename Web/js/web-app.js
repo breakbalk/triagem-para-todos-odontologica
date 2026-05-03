@@ -421,24 +421,16 @@ async function iniciarAdmin() {
     if (t.data_solicitacao) {
       dataStr = new Date(t.data_solicitacao).toLocaleString("pt-BR");
     }
-    tr.innerHTML =
-      "<td>" +
-      t.protocolo +
-      "</td><td>" +
-      t.user_id +
-      "</td><td>" +
-      t.nome +
-      "</td><td>" +
-      t.telefone +
-      "</td><td>" +
-      nomeServico +
-      "</td><td>" +
-      nomePeriodo +
-      "</td><td>" +
-      t.status +
-      "</td><td>" +
-      dataStr +
-      "</td>";
+    tr.innerHTML = `
+    <td>${t.protocolo}</td>
+    <td>${t.user_id}</td>
+    <td>${t.nome}</td>
+    <td>${t.telefone}</td>
+    <td>${nomeServico}</td>
+    <td>${nomePeriodo}</td>
+    <td>${formatarStatus(t.status, t.protocolo)}</td>
+    <td>${dataStr}</td>
+`;
     tbody.appendChild(tr);
   }
 } // 4. Fecha a função iniciarAdmin()
@@ -486,3 +478,26 @@ document.addEventListener("keyup", (event) => {
         });
     }
 });
+
+function formatarStatus(status, protocolo) {
+    const opcoes = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"];
+    
+    let html = `<select class="status-select" onchange="atualizarStatusBanco('${protocolo}', this.value)">`;
+    
+    opcoes.forEach(opcao => {
+        const selected = status === opcao ? "selected" : "";
+        html += `<option value="${opcao}" ${selected}>${opcao}</option>`;
+    });
+    
+    html += `</select>`;
+    return html;
+}
+
+function atualizarStatusBanco(protocolo, novoStatus) {
+    console.log(`Atualizando triagem ${protocolo} para: ${novoStatus}`);
+    
+    // Aqui na Sprint 3 você fará o fetch para o backend Python
+    // Exemplo: fetch('/atualizar_status', { method: 'POST', body: ... })
+    
+    alert(`Status da triagem ${protocolo} alterado para ${novoStatus}!`);
+}

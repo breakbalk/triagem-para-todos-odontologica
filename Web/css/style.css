@@ -1060,3 +1060,39 @@ body[data-page="admin"] {
 .admin-table th:last-child { 
     border-right: none; 
 }
+
+/* Estilização dos Badges de Status */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.status-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-default {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+.status-select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #007bff;
+}
