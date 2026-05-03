@@ -982,56 +982,70 @@ body[data-page="admin"] {
 
 /* --- CONTAINER DA TABELA --- */
 .table-wrap {
-    background-color: #ffffff; /* Fundo branco sólido para contraste total */
+    background-color: #ffffff;
     border-radius: 12px;
-    padding: 10px;
-    margin: 0 auto 30px auto;
-    width: 95%; /* Ocupa quase toda a largura da tela */
-    max-width: 1400px; /* Mas não estica infinitamente em monitores gigantes */
+    padding: 0;
+    margin: 20px auto;
+    width: 95%;
+    max-width: 1400px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    overflow-x: auto; /* Scroll apenas se necessário */
+    overflow: hidden;
+    /* Moldura externa em Creme */
+    border: 4px solid #F5F5DC; 
+}
+
+.table-scroll {
+    overflow-x: auto;
+    padding: 10px;
 }
 
 /* --- ESTILO DA TABELA --- */
 .admin-table {
-    width: 100%; /* No Desktop ela vai ocupar todo o espaço branco */
+    width: 100%;
     border-collapse: collapse;
-    min-width: 850px; /* No Mobile ela mantém esse tamanho e ativa o scroll lateral */
+    min-width: 850px;
 }
 
+/* Cabeçalho com divisórias verticais sutis */
 .admin-table th {
-    background-color: #f8fafc;
-    color: #334155;
+    background-color: #1a365d;
+    color: #ffffff;
     text-align: left;
     padding: 18px 15px;
-    font-weight: 700;
-    border-bottom: 2px solid #e2e8f0;
-    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border-bottom: 2px solid #F5F5DC;
+    /* Divisória vertical no cabeçalho */
+    border-right: 1px solid rgba(255, 255, 255, 0.1); 
 }
 
+/* Células com a grade Vermelha completa (Horizontal e Vertical) */
 .admin-table td {
     padding: 15px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #dc2626; /* Vermelho horizontal */
+    border-right: 1px solid #dc2626;  /* Vermelho vertical */
     color: #475569;
     font-size: 0.9rem;
 }
 
-.admin-table tr:hover {
-    background-color: #fcfcfc;
+/* Remove a borda vertical da última coluna para não encostar na moldura creme */
+.admin-table th:last-child,
+.admin-table td:last-child {
+    border-right: none;
 }
 
-/* --- BOTÃO VOLTAR --- */
-.btn-nav {
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    border: 2px solid #1a365d;
+/* Estilização da primeira coluna */
+.admin-table td:first-child {
+    font-weight: bold;
     color: #1a365d;
-    transition: 0.2s;
 }
 
-.btn-nav:hover {
-    background-color: #1a365d;
-    color: #fff;
+/* Efeito Zebra e Hover */
+.admin-table tr:nth-child(even) {
+    background-color: rgba(245, 245, 220, 0.2);
+}
+
+.admin-table tr:hover {
+    background-color: rgba(220, 38, 38, 0.05);
 }
