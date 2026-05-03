@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel — Equipe COE</title>
+    <script>
+        // Bloqueio de segurança imediato
+        (function() {
+            const logado = localStorage.getItem("usuario_logado");
+            const nivel = localStorage.getItem("nivel_acesso");
+
+            if (!logado || (nivel !== 'admin' && nivel !== 'secretaria')) {
+                window.location.href = "login.html"; 
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-app" data-page="admin">
