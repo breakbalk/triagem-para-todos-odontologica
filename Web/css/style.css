@@ -1101,3 +1101,21 @@ body[data-page="admin"] {
 .admin-table td:nth-child(7) {
     min-width: 140px; /* Garante espaço para o select e a seta */
 }
+
+/* Estilização do link do WhatsApp */
+.whatsapp-link {
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.whatsapp-link:hover {
+    transform: scale(1.1); /* Aumenta levemente o ícone */
+}
+
+.icon-whatsapp {
+    width: 40px; /* Ajuste o tamanho conforme o layout da sua header */
+    height: auto;
+    cursor: pointer;
+    vertical-align: middle;
+}
