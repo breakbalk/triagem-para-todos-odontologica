@@ -41,6 +41,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "troque-em-producao")
 # --- listas fixas (mesmo significado do relatório do projeto) ---
 SERVICOS_OK = ["tratamento_geral", "protese", "pediatria", "emergencia"]
 PERIODOS_OK = ["matutino", "vespertino", "noturno"]
+STATUS_TRIAGEM_OK = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"]
 
 # RN09 — mesmo formato da máscara no front: (DD) 99999-9999 (15 caracteres).
 _TELEFONE_RN09 = re.compile(r"^\(\d{2}\) \d{5}-\d{4}$")
@@ -48,6 +49,25 @@ _TELEFONE_RN09 = re.compile(r"^\(\d{2}\) \d{5}-\d{4}$")
 
 def telefone_valido_rn09(valor):
     return bool(_TELEFONE_RN09.match((valor or "").strip()))
+
+
+def nivel_acesso_do_usuario(u):
+    """Níveis suportados no relatório: comum, secretaria, admin."""
+    if not u:
+        return "comum"
+    if bool(u.get("is_admin", False)):
+        return "admin"
+    email = (u.get("email") or "").strip().lower()
+    secre_list = os.environ.get("COE_SECRETARIA_EMAILS", "").strip()
+    if secre_list:
+        emails = [item.strip().lower() for item in secre_list.split(",") if item.strip()]
+        if email in emails:
+            return "secretaria"
+    return "comum"
+
+
+def destino_pos_login(u):
+    return "/pages/admin.html" if nivel_acesso_do_usuario(u) in ("admin", "secretaria") else "/pages/home.html"
 
 
 def usuario_publico(u):
@@ -60,6 +80,7 @@ def usuario_publico(u):
         "email": u["email"],
         "telefone": u.get("telefone", ""),
         "is_admin": bool(u.get("is_admin", False)),
+        "nivel_acesso": nivel_acesso_do_usuario(u),
     }
 
 
@@ -110,6 +131,17 @@ def usuario_eh_admin():
     return bool(u.get("is_admin", False))
 
 
+def usuario_tem_acesso_admin():
+    """Permissão de gestão: admin e secretaria."""
+    uid = id_usuario_logado()
+    if uid is None:
+        return False
+    u = storage.buscar_usuario_por_id(uid)
+    if u is None:
+        return False
+    return nivel_acesso_do_usuario(u) in ("admin", "secretaria")
+
+
 # ---------- páginas estáticas / redirecionamento ----------
 
 
@@ -153,7 +185,14 @@ def api_register():
     session["user_email"] = user["email"]
     session["is_admin"] = user.get("is_admin", False)
     mobile_token = storage.criar_token_mobile(user["id"])
-    return jsonify({"ok": True, "user": usuario_publico(user), "mobile_token": mobile_token})
+    return jsonify(
+        {
+            "ok": True,
+            "user": usuario_publico(user),
+            "mobile_token": mobile_token,
+            "redirect_to": destino_pos_login(user),
+        }
+    )
 
 
 @app.route("/api/auth/login", methods=["POST"])
@@ -174,7 +213,14 @@ def api_login():
     session["user_email"] = user["email"]
     session["is_admin"] = user.get("is_admin", False)
     mobile_token = storage.criar_token_mobile(user["id"])
-    return jsonify({"ok": True, "user": usuario_publico(user), "mobile_token": mobile_token})
+    return jsonify(
+        {
+            "ok": True,
+            "user": usuario_publico(user),
+            "mobile_token": mobile_token,
+            "redirect_to": destino_pos_login(user),
+        }
+    )
 
 
 @app.route("/api/auth/logout", methods=["POST"])
@@ -202,6 +248,17 @@ def api_me():
         return jsonify({"ok": False, "user": None})
 
     return jsonify({"ok": True, "user": usuario_publico(user)})
+
+
+@app.route("/api/auth/redirect", methods=["GET"])
+def api_auth_redirect():
+    uid = id_usuario_logado()
+    if uid is None:
+        return jsonify({"ok": False, "redirect_to": "/pages/login.html"}), 401
+    user = storage.buscar_usuario_por_id(uid)
+    if user is None:
+        return jsonify({"ok": False, "redirect_to": "/pages/login.html"}), 401
+    return jsonify({"ok": True, "redirect_to": destino_pos_login(user)})
 
 
 @app.route("/api/auth/forgot-password", methods=["POST"])
@@ -281,7 +338,7 @@ def api_triagem_nova():
     if periodo not in PERIODOS_OK:
         return jsonify({"ok": False, "error": "Período inválido."}), 400
 
-    t = storage.criar_triagem(uid, nome, telefone, servico, periodo, sintomas)
+    t = storage.insert_triagem(uid, nome, telefone, servico, periodo, sintomas)
 
     # Para o paciente não precisamos mostrar user_id na resposta
     safe = {}
@@ -314,11 +371,44 @@ def api_triagem_admin():
     uid = id_usuario_logado()
     if uid is None:
         return jsonify({"ok": False, "error": "Não autenticado."}), 401
-    if not usuario_eh_admin():
+    if not usuario_tem_acesso_admin():
         return jsonify({"ok": False, "error": "Acesso restrito."}), 403
 
     lista = storage.listar_todas_triagens()
     return jsonify({"ok": True, "triagens": lista})
+
+
+@app.route("/api/triagem/admin/atualizar-status", methods=["POST"])
+def api_triagem_admin_atualizar_status():
+    uid = id_usuario_logado()
+    if uid is None:
+        return jsonify({"ok": False, "error": "Não autenticado."}), 401
+    if not usuario_tem_acesso_admin():
+        return jsonify({"ok": False, "error": "Acesso restrito."}), 403
+
+    body = request.get_json(silent=True) or {}
+    protocolo = (body.get("protocolo") or "").strip()
+    novo_status = (body.get("status") or "").strip()
+    if not protocolo:
+        return jsonify({"ok": False, "error": "Protocolo obrigatório."}), 400
+    if novo_status not in STATUS_TRIAGEM_OK:
+        return jsonify({"ok": False, "error": "Status inválido."}), 400
+
+    ok = storage.atualizar_status_triagem(protocolo, novo_status)
+    if not ok:
+        return jsonify({"ok": False, "error": "Triagem não encontrada."}), 404
+    return jsonify({"ok": True, "message": "Status atualizado."})
+
+
+# Compatibilidade com nomes de rotas do relatório/painel legado
+@app.route("/get_triagens", methods=["GET"])
+def api_get_triagens_compat():
+    return api_triagem_admin()
+
+
+@app.route("/atualizar_status", methods=["POST"])
+def api_atualizar_status_compat():
+    return api_triagem_admin_atualizar_status()
 
 
 # ---------- inicia o servidor ----------
