@@ -8,6 +8,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE } from "../config";
 
 var CHAVE_TOKEN = "coe_mobile_token";
+var CHAVE_CACHE_TRIAGENS = "coe_triagens_cache";
+var CHAVE_FILA_TRIAGENS = "coe_triagens_pendentes";
 var TIMEOUT_MS = 15000;
 
 function fetchComTimeout(url, opcoes) {
@@ -32,6 +34,20 @@ export async function lerToken() {
 
 export async function apagarToken() {
   await AsyncStorage.removeItem(CHAVE_TOKEN);
+}
+
+async function salvarJSON(chave, valor) {
+  await AsyncStorage.setItem(chave, JSON.stringify(valor));
+}
+
+async function lerJSON(chave, padrao) {
+  try {
+    var raw = await AsyncStorage.getItem(chave);
+    if (!raw) return padrao;
+    return JSON.parse(raw);
+  } catch (_e) {
+    return padrao;
+  }
 }
 
 /** POST JSON. Se mandar token, o servidor sabe quem é o usuário. */
@@ -121,7 +137,32 @@ export async function criarTriagem(corpo) {
   if (!t) {
     return { okHttp: false, dados: { ok: false, error: "Sessão expirada. Faça login novamente." } };
   }
-  return await postJSON("/api/triagem", corpo, t);
+
+  var r = await postJSON("/api/triagem", corpo, t);
+  if (r.okHttp && r.dados && r.dados.ok && r.dados.triagem) {
+    var triagemServidor = Object.assign({ source: "server" }, r.dados.triagem);
+    await salvarTriagemNoCache(triagemServidor);
+    return {
+      okHttp: true,
+      dados: {
+        ok: true,
+        triagem: triagemServidor,
+        source: "server",
+      },
+    };
+  }
+
+  // Fallback Sprint 3: se não subir para API, salva local como pendente.
+  var local = await enfileirarTriagemPendente(corpo);
+  return {
+    okHttp: true,
+    dados: {
+      ok: true,
+      triagem: local,
+      source: "local",
+      message: "Sem conexão. Triagem salva no aparelho e será reenviada automaticamente.",
+    },
+  };
 }
 
 export async function listarMinhasTriagens() {
@@ -129,5 +170,96 @@ export async function listarMinhasTriagens() {
   if (!t) {
     return { okHttp: false, dados: { ok: false, error: "Sessão expirada. Faça login novamente." } };
   }
-  return await getJSON("/api/triagem/minhas", t);
+  var r = await getJSON("/api/triagem/minhas", t);
+  if (r.okHttp && r.dados && r.dados.ok && Array.isArray(r.dados.triagens)) {
+    var triagensServidor = r.dados.triagens.map(function (item) {
+      return Object.assign({ source: "server" }, item);
+    });
+    await salvarJSON(CHAVE_CACHE_TRIAGENS, triagensServidor);
+    return {
+      okHttp: true,
+      dados: {
+        ok: true,
+        triagens: triagensServidor,
+        source: "server",
+      },
+    };
+  }
+  var cache = await lerJSON(CHAVE_CACHE_TRIAGENS, []);
+  return {
+    okHttp: true,
+    dados: {
+      ok: true,
+      triagens: cache,
+      source: "local",
+      message: "Mostrando dados locais (sem conexão com servidor).",
+    },
+  };
+}
+
+function protocoloLocal() {
+  var d = new Date();
+  var p2 = function (n) {
+    return n < 10 ? "0" + n : "" + n;
+  };
+  var base =
+    d.getFullYear() +
+    p2(d.getMonth() + 1) +
+    p2(d.getDate()) +
+    p2(d.getHours()) +
+    p2(d.getMinutes()) +
+    p2(d.getSeconds());
+  return "LOCAL-" + base;
+}
+
+async function salvarTriagemNoCache(triagem) {
+  var lista = await lerJSON(CHAVE_CACHE_TRIAGENS, []);
+  var nova = [triagem].concat(lista);
+  await salvarJSON(CHAVE_CACHE_TRIAGENS, nova);
+}
+
+async function enfileirarTriagemPendente(corpo) {
+  var agora = new Date().toISOString();
+  var triagemLocal = {
+    protocolo: protocoloLocal(),
+    nome: corpo.nome || "",
+    telefone: corpo.telefone || "",
+    servico: corpo.servico || "",
+    periodo: corpo.periodo || "",
+    sintomas: corpo.sintomas || "",
+    status: "Pendente (local)",
+    data_solicitacao: agora,
+    source: "local",
+  };
+  var fila = await lerJSON(CHAVE_FILA_TRIAGENS, []);
+  fila.push(corpo);
+  await salvarJSON(CHAVE_FILA_TRIAGENS, fila);
+  await salvarTriagemNoCache(triagemLocal);
+  return triagemLocal;
+}
+
+export async function sincronizarTriagensPendentes() {
+  var t = await lerToken();
+  if (!t) {
+    return { ok: false, enviados: 0, pendentes: 0 };
+  }
+  var fila = await lerJSON(CHAVE_FILA_TRIAGENS, []);
+  if (!fila.length) {
+    return { ok: true, enviados: 0, pendentes: 0 };
+  }
+
+  var restantes = [];
+  var enviados = 0;
+  for (var i = 0; i < fila.length; i++) {
+    var corpo = fila[i];
+    var r = await postJSON("/api/triagem", corpo, t);
+    if (r.okHttp && r.dados && r.dados.ok && r.dados.triagem) {
+      enviados += 1;
+      await salvarTriagemNoCache(Object.assign({ source: "server" }, r.dados.triagem));
+    } else {
+      restantes.push(corpo);
+    }
+  }
+  await salvarJSON(CHAVE_FILA_TRIAGENS, restantes);
+  return { ok: true, enviados: enviados, pendentes: restantes.length };
 }
