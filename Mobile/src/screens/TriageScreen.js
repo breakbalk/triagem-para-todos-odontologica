@@ -71,6 +71,9 @@ export default function TriageScreen({ navigation }) {
       return;
     }
 
+    if (r.dados && r.dados.source === "local") {
+      Alert.alert("Triagem", r.dados.message || "Triagem salva localmente.");
+    }
     navigation.replace("Success", { triagem: r.dados.triagem });
   }
 

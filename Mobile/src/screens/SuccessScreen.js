@@ -60,6 +60,11 @@ export default function SuccessScreen({ navigation, route }) {
         <Text style={styles.k}>Status: </Text>
         {t.status || "Pendente"}
       </Text>
+      {t.source === "local" ? (
+        <Text style={styles.localInfo}>
+          Sem conexão no envio: esta triagem foi salva localmente e será sincronizada quando a API estiver disponível.
+        </Text>
+      ) : null}
 
       <View style={{ flex: 1 }} />
       <Button title="IR PARA HOME" onPress={voltarHome} />
@@ -72,4 +77,5 @@ var styles = StyleSheet.create({
   titulo: { fontSize: 24, fontWeight: "800", color: "#2e7d4a", marginBottom: 18 },
   item: { marginBottom: 10, color: "#222", lineHeight: 22 },
   k: { fontWeight: "700", color: "#353375" },
+  localInfo: { marginTop: 6, color: "#8a5a00", fontWeight: "600" },
 });
