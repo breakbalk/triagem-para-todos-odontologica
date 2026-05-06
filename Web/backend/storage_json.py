@@ -153,6 +153,11 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     return registro
 
 
+def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+    """Alias explícito para documentação (INSERT de triagem)."""
+    return criar_triagem(user_id, nome, telefone, servico, periodo, sintomas)
+
+
 def listar_triagens_do_usuario(user_id):
     uid = int(user_id)
     lista = []
@@ -164,6 +169,18 @@ def listar_triagens_do_usuario(user_id):
 
 def listar_todas_triagens():
     return list(dados["triagens"])
+
+
+def atualizar_status_triagem(protocolo, novo_status):
+    protocolo = (protocolo or "").strip()
+    if not protocolo:
+        return False
+    for t in dados["triagens"]:
+        if str(t.get("protocolo", "")).strip() == protocolo:
+            t["status"] = (novo_status or "").strip() or "Pendente"
+            _salvar()
+            return True
+    return False
 
 
 def salvar_token_reset(email):

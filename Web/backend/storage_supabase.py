@@ -218,6 +218,11 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     }
 
 
+def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+    """Alias explícito para documentação (INSERT de triagem)."""
+    return criar_triagem(user_id, nome, telefone, servico, periodo, sintomas)
+
+
 def listar_triagens_do_usuario(user_id):
     uid = str(user_id).strip()
     r = (
@@ -234,6 +239,21 @@ def listar_triagens_do_usuario(user_id):
 def listar_todas_triagens():
     r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
     return [_row_triagem(row) for row in (r.data or [])]
+
+
+def atualizar_status_triagem(protocolo, novo_status):
+    protocolo = (protocolo or "").strip()
+    if not protocolo:
+        return False
+    r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
+    for row in (r.data or []):
+        ex = _extras_solicitacao(row.get("solicitacao_dados"))
+        if str(ex.get("protocolo", "")).strip() != protocolo:
+            continue
+        ex["status"] = (novo_status or "").strip() or "Pendente"
+        _sb().table("triagens").update({"solicitacao_dados": json.dumps(ex)}).eq("id_triagem", row["id_triagem"]).execute()
+        return True
+    return False
 
 
 def salvar_token_reset(email):
