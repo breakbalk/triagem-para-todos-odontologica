@@ -12,6 +12,7 @@ export default function HomeScreen({ navigation }) {
   var [user, setUser] = useState(null);
   var [triagens, setTriagens] = useState([]);
   var [loadingTriagens, setLoadingTriagens] = useState(true);
+  var [avisoSync, setAvisoSync] = useState("");
 
   useFocusEffect(
     useCallback(function () {
@@ -19,10 +20,21 @@ export default function HomeScreen({ navigation }) {
         var r = await api.quemSou();
         if (r.dados.ok && r.dados.user) {
           setUser(r.dados.user);
+          var sync = await api.sincronizarTriagensPendentes();
+          if (sync && sync.enviados > 0) {
+            setAvisoSync("Sincronização concluída: " + sync.enviados + " triagem(ns) enviada(s).");
+          } else if (sync && sync.pendentes > 0) {
+            setAvisoSync("Há " + sync.pendentes + " triagem(ns) pendente(s) de conexão.");
+          } else {
+            setAvisoSync("");
+          }
           setLoadingTriagens(true);
           var tr = await api.listarMinhasTriagens();
           if (tr.okHttp && tr.dados.ok && Array.isArray(tr.dados.triagens)) {
             setTriagens(tr.dados.triagens);
+            if (tr.dados.source === "local" && tr.dados.message) {
+              setAvisoSync(tr.dados.message);
+            }
           } else {
             setTriagens([]);
           }
@@ -69,6 +81,7 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.logo}>COE</Text>
       <Text style={styles.bemvindo}>Olá, {user.nome}!</Text>
       <Text style={styles.info}>Faça uma nova triagem ou acompanhe suas solicitações recentes.</Text>
+      {avisoSync ? <Text style={styles.aviso}>{avisoSync}</Text> : null}
 
       <Button title="NOVA TRIAGEM" onPress={function () { navigation.navigate("Triage"); }} />
 
@@ -115,6 +128,7 @@ var styles = StyleSheet.create({
   logo: { fontSize: 32, fontWeight: "800", color: "#353375" },
   bemvindo: { fontSize: 20, marginTop: 12, color: "#222" },
   info: { marginTop: 12, color: "#555", lineHeight: 22 },
+  aviso: { marginTop: 8, color: "#2e7d4a", fontWeight: "600" },
   secao: { marginTop: 18, marginBottom: 8, color: "#353375", fontWeight: "800", fontSize: 16 },
   card: {
     backgroundColor: "#fff",
