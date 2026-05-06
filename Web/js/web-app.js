@@ -111,7 +111,8 @@ function iniciarLogin() {
       return;
     }
 
-    window.location.href = "/pages/home.html";
+    var destino = r.dados.redirect_to || "/pages/home.html";
+    window.location.href = destino;
   });
 }
 
@@ -163,7 +164,8 @@ function iniciarCadastro() {
       return;
     }
 
-    window.location.href = "/pages/home.html";
+    var destino = r.dados.redirect_to || "/pages/home.html";
+    window.location.href = destino;
   });
 }
 
@@ -246,7 +248,8 @@ async function iniciarHome() {
 
   var linkAdmin = document.getElementById("link-admin");
   if (linkAdmin) {
-    linkAdmin.style.display = user.is_admin ? "inline-block" : "none";
+    var adminLike = user.is_admin || user.nivel_acesso === "admin" || user.nivel_acesso === "secretaria";
+    linkAdmin.style.display = adminLike ? "inline-block" : "none";
   }
 
   var r = await getJSON("/api/triagem/minhas");
@@ -288,13 +291,13 @@ async function iniciarHome() {
 // --- TRIAGEM ---
 
 async function iniciarTriagem() {
-  // Procure onde você inicializa a página de triagem e adicione:
-var campoTel = document.getElementById("triagem-telefone");
-if (campoTel) {
-  campoTel.addEventListener("input", function() {
-    mascaraTelefone(this);
-  });
-}
+  // RN09: máscara de telefone para manter consistência visual no front.
+  var campoTel = document.getElementById("triagem-telefone");
+  if (campoTel) {
+    campoTel.addEventListener("input", function () {
+      mascaraTelefone(this);
+    });
+  }
   var user = await precisaEstarLogado();
   if (!user) return;
 
@@ -305,11 +308,11 @@ if (campoTel) {
     ev.preventDefault();
     esconderMsg();
     var telValue = document.getElementById("triagem-telefone").value;
-// RN09: Validação severa no front
-if (telValue.length < 15) {
-  alert("Por favor, informe o telefone completo no formato (DD) 99999-9999");
-  return; 
-}
+    // RN09: validação severa no front (backend também valida).
+    if (telValue.length < 15) {
+      alert("Por favor, informe o telefone completo no formato (DD) 99999-9999");
+      return;
+    }
 
     var periodoRadio = document.querySelector('input[name="periodo"]:checked');
     var periodo = periodoRadio ? periodoRadio.value : "";
@@ -393,7 +396,8 @@ async function iniciarAdmin() {
   var user = await precisaEstarLogado();
   if (!user) return;
 
-  if (!user.is_admin) {
+  var adminLike = user.is_admin || user.nivel_acesso === "admin" || user.nivel_acesso === "secretaria";
+  if (!adminLike) {
     mostrarErro("Acesso restrito.");
     setTimeout(function () {
       window.location.href = "/pages/home.html";
@@ -433,7 +437,7 @@ async function iniciarAdmin() {
 `;
     tbody.appendChild(tr);
   }
-} // 4. Fecha a função iniciarAdmin()
+}
 
 /** Ponto de entrada: roda depois que o HTML carregou. */
 function iniciar() {
@@ -505,26 +509,15 @@ function formatarStatus(status, protocolo) {
 
 async function atualizarStatusBanco(protocolo, novoStatus) {
     try {
-        // Esta é a parte vital: o envio dos dados para o seu app.py
-        const resposta = await fetch('http://127.0.0.1:5000/atualizar_status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                protocolo: protocolo,
-                status: novoStatus
-            })
+        var r = await postJSON("/atualizar_status", {
+          protocolo: protocolo,
+          status: novoStatus
         });
-
-        if (resposta.ok) {
-            alert(`Sucesso! Status da triagem ${protocolo} atualizado.`);
-        } else {
-            throw new Error("Erro no servidor");
+        if (!r.okHttp) {
+          throw new Error(r.dados.error || "Erro no servidor");
         }
     } catch (error) {
-        // Se o servidor Python não estiver rodando, o Front avisa aqui
         console.error("Falha na comunicação:", error);
-        alert("Não foi possível salvar. Verifique se o servidor está rodando.");
+        alert("Não foi possível salvar o status. " + (error && error.message ? error.message : ""));
     }
 }
