@@ -177,7 +177,6 @@ def atualizar_senha_por_email(email, password_hash):
 
 def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     uid_str = str(user_id).strip()
-    agora = datetime.now()
     extra = {
         "nome": nome.strip(),
         "telefone": telefone.strip(),
@@ -194,15 +193,25 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
                 "servico": servico,
                 "periodo": periodo,
                 "solicitacao_dados": json.dumps(extra),
-                "data_triagem": agora.isoformat(),
             }
         )
         .execute()
     )
     if not ins.data:
         raise RuntimeError("Não foi possível criar a triagem.")
-    id_t = str(ins.data[0]["id_triagem"])
-    extra["protocolo"] = "TRG-%s-%s" % (agora.year, id_t.replace("-", "")[:8])
+    row = ins.data[0]
+    id_t = str(row["id_triagem"])
+    data_triagem_db = row.get("data_triagem")
+    if hasattr(data_triagem_db, "isoformat"):
+        data_solicitacao = data_triagem_db.isoformat()
+    elif data_triagem_db is None:
+        data_solicitacao = datetime.now().isoformat()
+    else:
+        data_solicitacao = str(data_triagem_db)
+    ano_proto = datetime.now().year
+    if data_solicitacao and len(data_solicitacao) >= 4 and data_solicitacao[:4].isdigit():
+        ano_proto = int(data_solicitacao[:4])
+    extra["protocolo"] = "TRG-%s-%s" % (ano_proto, id_t.replace("-", "")[:8])
     _sb().table("triagens").update({"solicitacao_dados": json.dumps(extra)}).eq("id_triagem", id_t).execute()
     return {
         "id": id_t,
@@ -213,7 +222,7 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         "periodo": periodo,
         "sintomas": extra["sintomas"],
         "status": extra["status"],
-        "data_solicitacao": agora.isoformat(),
+        "data_solicitacao": data_solicitacao,
         "protocolo": extra["protocolo"],
     }
 
