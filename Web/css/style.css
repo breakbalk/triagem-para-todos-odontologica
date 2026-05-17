@@ -1119,3 +1119,36 @@ body[data-page="admin"] {
     cursor: pointer;
     vertical-align: middle;
 }
+
+/* ==========================================================================
+   CONFIGURAÇÃO DOS PLANOS DE FUNDO (SPRINT 4) - CAMINHO ASSETS CORRIGIDO
+   ========================================================================== */
+
+/* Padrão para Desktop (Telas acima de 768px) */
+body.bg-app[data-page="confirmacao"] {
+    background-image: url('../assets/img/confirmacao_desktop.png') !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Breakpoint para Tablet (Até 768px) */
+@media (max-width: 768px) {
+    body.bg-app[data-page="confirmacao"] {
+        background-image: url('../assets/img/confirmacao_tablet.png') !important;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+}
+
+/* Breakpoint para Mobile (Até 480px) */
+@media (max-width: 480px) {
+    body.bg-app[data-page="confirmacao"] {
+        background-image: url('../assets/img/confirmacao_mobile.png') !important;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+}
