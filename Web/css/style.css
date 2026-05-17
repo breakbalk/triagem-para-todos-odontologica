@@ -1182,7 +1182,7 @@ body.bg-app[data-page="confirmacao"] {
 
 /* O corpo do pergaminho */
 .modal-content.pergaminho {
-    background: #ffffff;
+    background: var(--secondary-color);
     width: 90%;
     max-width: 460px;
     padding: 25px;
@@ -1205,7 +1205,7 @@ body.bg-app[data-page="confirmacao"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px dashed #3498db;
+    border-bottom: 2px dashed var(--primary-color);
     padding-bottom: 12px;
     margin-bottom: 15px;
 }
@@ -1231,9 +1231,11 @@ body.bg-app[data-page="confirmacao"] {
 }
 
 .modal-body p {
-    color: #7f8c8d;
-    font-size: 0.95rem;
-    line-height: 1.4;
+    font-size: 1rem;
+    color: #2c3e50; /* Cor escura para dar leitura perfeita no fundo creme */
+    margin-bottom: 15px;
+    line-height: 1.5;
+    font-weight: 500; /* Deixa o texto levemente mais nítido */
 }
 
 /* Estilização da listagem interna */
@@ -1244,11 +1246,28 @@ body.bg-app[data-page="confirmacao"] {
 }
 
 .lista-documentos-modal li {
-    background: #f8f9fa;
+    background: var(--white);
     margin-bottom: 10px;
     padding: 12px;
-    border-left: 4px solid #3498db;
+    border-left: 4px solid var(--primary-color);
     border-radius: 0 5px 5px 0;
     font-size: 0.95rem;
     color: #34495e;
+}
+
+/* Responsividade do Pergaminho: Melhora o tamanho em Tablets e Desktops */
+@media (min-width: 768px) {
+    .modal-content.pergaminho {
+        max-width: 650px; /* Deixa o pergaminho mais largo e imponente em telas maiores */
+        padding: 35px;    /* Aumenta o espaçamento interno para dar respiro */
+    }
+    
+    .modal-header h2 {
+        font-size: 1.6rem; /* Aumenta o título proporcionalmente */
+    }
+    
+    .lista-documentos-modal li {
+        font-size: 1.05rem; /* Melhora a leitura dos itens em telas grandes */
+        padding: 15px;
+    }
 }
