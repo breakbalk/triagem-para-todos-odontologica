@@ -441,6 +441,32 @@ async function iniciarAdmin() {
 
 /** Ponto de entrada: roda depois que o HTML carregou. */
 function iniciar() {
+  // --- ATIVAÇÃO DO PERGAMINHO (SPRINT 4) ---
+  var btnDocumentos = document.querySelector(".menu-docs");
+  var modal = document.getElementById("modal-documentos");
+  var btnFechar = document.querySelector(".modal-close-btn");
+
+  // Se o botão existir na página atual (Home), ativa a lógica do pergaminho
+  if (btnDocumentos && modal) {
+    btnDocumentos.addEventListener("click", function (e) {
+      e.preventDefault();
+      modal.classList.add("active");
+    });
+
+    if (btnFechar) {
+      btnFechar.addEventListener("click", function () {
+        modal.classList.remove("active");
+      });
+    }
+
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+  }
+  // ------------------------------------------
+
   var page = document.body.getAttribute("data-page");
 
   if (page === "login") iniciarLogin();

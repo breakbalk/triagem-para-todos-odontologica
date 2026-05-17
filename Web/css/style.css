@@ -1152,3 +1152,103 @@ body.bg-app[data-page="confirmacao"] {
         background-repeat: no-repeat;
     }
 }
+
+/* ==========================================================================
+   MODAL DE DOCUMENTOS (EFEITO PERGAMINHO REAPROVEITÁVEL)
+   ========================================================================== */
+
+/* Fundo escurecido atrás do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Garante que fica por cima de todas as camadas da interface */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Quando o modal ganha o gatilho de ativo */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* O corpo do pergaminho */
+.modal-content.pergaminho {
+    background: #ffffff;
+    width: 90%;
+    max-width: 460px;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    
+    /* Configuração inicial para o efeito descer desenrolando */
+    transform: translateY(-60px) scaleY(0);
+    transform-origin: top center; /* Define que a abertura começa no topo */
+    transition: transform 0.45s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Animação que faz o pergaminho descer e esticar até o tamanho real */
+.modal-overlay.active .modal-content.pergaminho {
+    transform: translateY(0) scaleY(1);
+}
+
+/* Cabeçalho interna do pergaminho */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #3498db;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.modal-header h2 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #bdc3c7;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+    color: #e74c3c;
+}
+
+.modal-body p {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Estilização da listagem interna */
+.lista-documentos-modal {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0 0 0;
+}
+
+.lista-documentos-modal li {
+    background: #f8f9fa;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-left: 4px solid #3498db;
+    border-radius: 0 5px 5px 0;
+    font-size: 0.95rem;
+    color: #34495e;
+}
