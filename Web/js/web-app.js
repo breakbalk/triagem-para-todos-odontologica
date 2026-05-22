@@ -24,6 +24,56 @@ var PERIODO_LABEL = {
   noturno: "Noturno",
 };
 
+/** Chaves legadas no localStorage (Sprint 4 — limpeza no logout). */
+var CHAVES_STORAGE_LEGADAS = ["usuario_logado", "nivel_acesso", "coe_user", "token"];
+
+function escapeHtml(texto) {
+  return String(texto || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/** Remove dados temporários do navegador (sessão da triagem + legado). */
+function limparDadosLocais() {
+  try {
+    sessionStorage.removeItem("coe_last_triagem");
+  } catch (_e) {
+    /* ignore */
+  }
+  for (var i = 0; i < CHAVES_STORAGE_LEGADAS.length; i++) {
+    try {
+      localStorage.removeItem(CHAVES_STORAGE_LEGADAS[i]);
+    } catch (_e2) {
+      /* ignore */
+    }
+  }
+}
+
+/** RF logout: encerra sessão no servidor e limpa armazenamento local. */
+async function fazerLogout() {
+  try {
+    await postJSON("/api/auth/logout", {});
+  } catch (_e) {
+    /* mesmo offline, limpa o cliente */
+  }
+  limparDadosLocais();
+  window.location.href = "/pages/login.html";
+}
+
+function iniciarBotoesLogout() {
+  var botoes = document.querySelectorAll('[data-action="logout"], .btn-exit');
+  for (var i = 0; i < botoes.length; i++) {
+    botoes[i].addEventListener("click", function (ev) {
+      ev.preventDefault();
+      if (window.confirm("Deseja sair e encerrar sua sessão com segurança?")) {
+        fazerLogout();
+      }
+    });
+  }
+}
+
 /**
  * POST com JSON. Devolve { okHttp, dados } onde okHttp é true se status 200-299.
  */
@@ -244,7 +294,10 @@ async function iniciarHome() {
   if (!user) return;
 
   var elNome = document.getElementById("home-nome");
-  if (elNome) elNome.textContent = user.nome;
+  if (elNome) {
+    var nomeExibir = (user.nome || "visitante").trim().split(" ")[0];
+    elNome.textContent = nomeExibir;
+  }
 
   var linkAdmin = document.getElementById("link-admin");
   if (linkAdmin) {
@@ -276,13 +329,13 @@ async function iniciarHome() {
     var nomePeriodo = PERIODO_LABEL[t.periodo] ? PERIODO_LABEL[t.periodo] : t.periodo;
     li.innerHTML =
       "<strong>" +
-      t.protocolo +
+      escapeHtml(t.protocolo) +
       "</strong> — " +
-      nomeServico +
+      escapeHtml(nomeServico) +
       " — " +
-      nomePeriodo +
+      escapeHtml(nomePeriodo) +
       " — <em>" +
-      t.status +
+      escapeHtml(t.status) +
       "</em>";
     ul.appendChild(li);
   }
@@ -357,17 +410,28 @@ async function iniciarConfirmacao() {
   if (!user) return;
 
   var box = document.getElementById("resumo-triagem");
+  var destaque = document.getElementById("resumo-destaque");
+  var elServico = document.getElementById("resumo-servico");
+  var elPeriodo = document.getElementById("resumo-periodo");
   var raw = sessionStorage.getItem("coe_last_triagem");
 
   if (!box) return;
 
   if (!raw) {
+    if (destaque) destaque.hidden = true;
     box.textContent =
-      "Nenhum dado recente. Faça uma nova triagem ou veja o histórico na home.";
+      "Nenhum dado recente. Faça uma nova triagem ou veja o histórico na página inicial.";
     return;
   }
 
-  var t = JSON.parse(raw);
+  var t;
+  try {
+    t = JSON.parse(raw);
+  } catch (_err) {
+    if (destaque) destaque.hidden = true;
+    box.textContent = "Não foi possível ler os dados da triagem. Envie uma nova solicitação.";
+    return;
+  }
   var dataFmt = "—";
   if (t.data_solicitacao) {
     dataFmt = new Date(t.data_solicitacao).toLocaleString("pt-BR");
@@ -376,17 +440,26 @@ async function iniciarConfirmacao() {
   var nomeServico = SERVICO_LABEL[t.servico] ? SERVICO_LABEL[t.servico] : t.servico;
   var nomePeriodo = PERIODO_LABEL[t.periodo] ? PERIODO_LABEL[t.periodo] : t.periodo;
 
-  var html = "";
-  html += "<p><strong>Protocolo:</strong> " + t.protocolo + "</p>";
-  html += "<p><strong>Nome:</strong> " + t.nome + "</p>";
-  html += "<p><strong>Telefone:</strong> " + t.telefone + "</p>";
-  html += "<p><strong>Serviço:</strong> " + nomeServico + "</p>";
-  html += "<p><strong>Período preferido:</strong> " + nomePeriodo + "</p>";
-  html += "<p><strong>Data da solicitação:</strong> " + dataFmt + "</p>";
-  html += "<p><strong>Status:</strong> " + t.status + "</p>";
-  if (t.sintomas) {
-    html += "<p><strong>Observações:</strong> " + t.sintomas + "</p>";
+  /* RN15: destaque dinâmico da especialidade e do turno escolhidos */
+  if (destaque && elServico && elPeriodo) {
+    destaque.hidden = false;
+    elServico.textContent = nomeServico;
+    elPeriodo.textContent = "Turno preferido: " + nomePeriodo;
   }
+
+  var html = "";
+  html += "<p><strong>Protocolo:</strong> " + escapeHtml(t.protocolo) + "</p>";
+  html += "<p><strong>Nome:</strong> " + escapeHtml(t.nome) + "</p>";
+  html += "<p><strong>Telefone:</strong> " + escapeHtml(t.telefone) + "</p>";
+  html += "<p><strong>Serviço confirmado:</strong> " + escapeHtml(nomeServico) + "</p>";
+  html += "<p><strong>Período confirmado:</strong> " + escapeHtml(nomePeriodo) + "</p>";
+  html += "<p><strong>Data da solicitação:</strong> " + escapeHtml(dataFmt) + "</p>";
+  html += "<p><strong>Status:</strong> " + escapeHtml(t.status) + "</p>";
+  if (t.sintomas) {
+    html += "<p><strong>Observações:</strong> " + escapeHtml(t.sintomas) + "</p>";
+  }
+  html +=
+    '<p class="resumo-nota">O horário definitivo será definido pela equipe da clínica após análise da triagem.</p>';
   box.innerHTML = html;
 }
 
@@ -425,47 +498,57 @@ async function iniciarAdmin() {
     if (t.data_solicitacao) {
       dataStr = new Date(t.data_solicitacao).toLocaleString("pt-BR");
     }
-    tr.innerHTML = `
-    <td>${t.protocolo}</td>
-    <td>${t.user_id}</td>
-    <td>${t.nome}</td>
-    <td>${t.telefone}</td>
-    <td>${nomeServico}</td>
-    <td>${nomePeriodo}</td>
-    <td>${formatarStatus(t.status, t.protocolo)}</td>
-    <td>${dataStr}</td>
-`;
+    tr.innerHTML =
+      "<td>" +
+      escapeHtml(t.protocolo) +
+      "</td><td>" +
+      escapeHtml(t.user_id) +
+      "</td><td>" +
+      escapeHtml(t.nome) +
+      "</td><td>" +
+      escapeHtml(t.telefone) +
+      "</td><td>" +
+      escapeHtml(nomeServico) +
+      "</td><td>" +
+      escapeHtml(nomePeriodo) +
+      "</td><td>" +
+      formatarStatus(t.status, t.protocolo) +
+      "</td><td>" +
+      escapeHtml(dataStr) +
+      "</td>";
     tbody.appendChild(tr);
   }
 }
 
-/** Ponto de entrada: roda depois que o HTML carregou. */
-function iniciar() {
-  // --- ATIVAÇÃO DO PERGAMINHO (SPRINT 4) ---
+function iniciarModalDocumentos() {
   var btnDocumentos = document.querySelector(".menu-docs");
   var modal = document.getElementById("modal-documentos");
-  var btnFechar = document.querySelector(".modal-close-btn");
+  var btnFechar = modal ? modal.querySelector(".modal-close-btn") : null;
 
-  // Se o botão existir na página atual (Home), ativa a lógica do pergaminho
-  if (btnDocumentos && modal) {
-    btnDocumentos.addEventListener("click", function (e) {
-      e.preventDefault();
-      modal.classList.add("active");
-    });
+  if (!btnDocumentos || !modal) return;
 
-    if (btnFechar) {
-      btnFechar.addEventListener("click", function () {
-        modal.classList.remove("active");
-      });
-    }
+  btnDocumentos.addEventListener("click", function (e) {
+    e.preventDefault();
+    modal.classList.add("active");
+  });
 
-    modal.addEventListener("click", function (e) {
-      if (e.target === modal) {
-        modal.classList.remove("active");
-      }
+  if (btnFechar) {
+    btnFechar.addEventListener("click", function () {
+      modal.classList.remove("active");
     });
   }
-  // ------------------------------------------
+
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) {
+      modal.classList.remove("active");
+    }
+  });
+}
+
+/** Ponto de entrada: roda depois que o HTML carregou. */
+function iniciar() {
+  iniciarBotoesLogout();
+  iniciarModalDocumentos();
 
   var page = document.body.getAttribute("data-page");
 
@@ -521,8 +604,9 @@ document.addEventListener("keyup", (event) => {
 
 function formatarStatus(status, protocolo) {
     const opcoes = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"];
-    
-    let html = `<select class="status-select" onchange="atualizarStatusBanco('${protocolo}', this.value)">`;
+    var protoAttr = String(protocolo || "").replace(/'/g, "\\'");
+
+    let html = `<select class="status-select" onchange="atualizarStatusBanco('${protoAttr}', this.value)">`;
     
     opcoes.forEach(opcao => {
         const selected = status === opcao ? "selected" : "";
