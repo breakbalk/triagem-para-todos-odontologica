@@ -54,8 +54,10 @@ Com `COE_DEMO_RESET_TOKEN=1` (padrão), após informar o e-mail a API devolve um
 | Caminho | Uso |
 |---------|-----|
 | `pages/` | Telas: login, cadastro, recuperar senha, home, triagem, confirmação, admin. |
-| `css/style.css` | Estilos globais + layout das telas logadas. |
+| `css/style.css` | Estilos globais (fonte editável). |
+| `css/style.min.css` | CSS minificado para produção/demo (Sprint 4 — RNF04). Regenerar: `python tools/minify_css.py`. |
 | `js/web-app.js` | Chamadas `fetch` à API e lógica por página (`data-page` no `<body>`). |
+| `CHECKLIST-TESTES-SPRINT4-WEB.md` | Homologação manual da Sprint 4 (web). |
 | `backend/` | `app.py` (Flask), `storage.py` (escolhe JSON ou Supabase), `storage_json.py`, `storage_supabase.py`. |
 | `data/` | `app_storage.json` só no modo JSON (não versionar). |
 | `supabase/schema.sql` | DDL para criar tabelas no Supabase. |

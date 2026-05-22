@@ -4,43 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Início - COE</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
 </head>
 <body data-page="home">
 
     <div class="video-container">
-        <video autoplay muted loop playsinline id="bg-video">
+        <video autoplay muted loop playsinline preload="none" id="bg-video">
             <source src="/assets/video/home_video.mp4" type="video/mp4">
         </video>
         <div class="overlay-fix"></div>
     </div>
 
     <div class="interface-layer">
-        
-        <header class="header-home">
-    <div class="header-center">
-    <a href="https://wa.me/5562999640607?text=Olá!%20Gostaria%20de%20mais%20informações%20sobre%20a%20triagem%20da%20clínica%20COE." 
-   target="_blank" 
-   class="whatsapp-link">
-    <img src="../assets/img/home_whatsapp_logo.png" alt="WhatsApp" class="icon-whatsapp">
-    </a>
-    <a href="#" class="menu-docs">Documentos Necessários</a>
-    </div>
 
-    <div class="header-right">
-        <img src="/assets/img/home_dente.png" alt="Dente" class="dente-topo">
-        <span class="admin-label">Administrador COE</span>
-        <a href="/pages/admin.html" class="btn-panel">Painel equipe</a>
-        <a href="#" class="btn-exit">Sair</a>
-    </div>
+        <header class="header-home">
+            <div class="header-center">
+                <a href="https://wa.me/5562999640607?text=Olá!%20Gostaria%20de%20mais%20informações%20sobre%20a%20triagem%20da%20clínica%20COE."
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="whatsapp-link">
+                    <img src="../assets/img/home_whatsapp_logo.png" alt="WhatsApp" class="icon-whatsapp" width="40" height="40">
+                </a>
+                <a href="#" class="menu-docs">Documentos necessários</a>
+            </div>
+
+            <div class="header-right">
+                <img src="/assets/img/home_dente.png" alt="" class="dente-topo" width="48" height="48">
+                <span class="admin-label">Área do paciente</span>
+                <a href="/pages/admin.html" id="link-admin" class="btn-panel" style="display:none">Painel equipe</a>
+                <a href="#" class="btn-exit" data-action="logout">Sair</a>
+            </div>
         </header>
 
         <main class="main-layout">
             <div class="content-left">
-                <img src="/assets/img/coe_logo.png" alt="Logo COE" class="logo-main">
-                
+                <img src="/assets/img/coe_logo.png" alt="Logo COE" class="logo-main" width="280" height="auto">
+
+                <p class="home-welcome">Olá, <span id="home-nome">visitante</span>!</p>
+
                 <div class="hero-text">
-                    <p>Especialistas em Sorrisos - Resolvemos seus problemas com Estilo!</p>
+                    <p>Especialistas em Sorrisos — Resolvemos seus problemas com estilo!</p>
                     <p>Apresentamos a você a triagem mais moderna da região.</p>
                 </div>
 
@@ -48,19 +51,19 @@
 
                 <div class="recent-requests">
                     <h3>Suas solicitações recentes</h3>
-                    <p>Você ainda não enviou triagens. Clique em «Nova triagem».</p>
+                    <ul id="lista-triagens"></ul>
                 </div>
             </div>
         </main>
 
-        <img src="/assets/img/home_decoracao.png" alt="Decoração" class="mario-decor">
-    </div>
+        <img src="/assets/img/home_decoracao.png" alt="" class="mario-decor" loading="lazy" width="200" height="auto">
+    </div>
 
-    <div id="modal-documentos" class="modal-overlay">
+    <div id="modal-documentos" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-docs-title">
         <div class="modal-content pergaminho">
             <div class="modal-header">
-                <h2>📜 Documentos Obrigatórios</h2>
-                <button class="modal-close-btn">&times;</button>
+                <h2 id="modal-docs-title">Documentos obrigatórios</h2>
+                <button type="button" class="modal-close-btn" aria-label="Fechar">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Apresente os seguintes documentos originais no dia da sua consulta na Clínica COE:</p>
@@ -77,6 +80,3 @@
     <script src="/js/web-app.js" defer></script>
 </body>
 </html>
-
-
-

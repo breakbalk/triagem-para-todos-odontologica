@@ -4,18 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel — Equipe COE</title>
-    <script>
-        // Bloqueio de segurança imediato
-        (function() {
-            const logado = localStorage.getItem("usuario_logado");
-            const nivel = localStorage.getItem("nivel_acesso");
-
-            if (!logado || (nivel !== 'admin' && nivel !== 'secretaria')) {
-                window.location.href = "login.html"; 
-            }
-        })();
-    </script>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
 </head>
 <body class="bg-app" data-page="admin">
 
@@ -24,6 +13,7 @@
             <h1>Triagens recebidas</h1>
             <nav class="app-nav">
                 <a href="/pages/home.html" class="btn-nav btn-ghost">← Voltar</a>
+                <button type="button" class="btn-nav btn-logout" data-action="logout">Sair</button>
             </nav>
         </div>
     </header>
@@ -32,7 +22,7 @@
         <p id="msg" class="form-msg" hidden></p>
         <div class="admin-toolbar">
             <div class="search-box">
-        <input type="text" id="admin-search" placeholder="🔍 Filtrar por paciente ou serviço..." class="form-control">
+                <input type="text" id="admin-search" placeholder="Filtrar por paciente ou serviço..." class="form-control">
             </div>
         </div>
         <div class="table-wrap">
