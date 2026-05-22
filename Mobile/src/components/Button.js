@@ -1,21 +1,27 @@
-/**
- * Botão principal (mesma ideia do .btn-primary do site).
- */
 import React from "react";
 import { Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { colors } from "../theme";
 
-export default function Button({ title, onPress, disabled, loading }) {
+export default function Button({ title, onPress, disabled, loading, variant }) {
+  var isSecondary = variant === "secondary";
+  var isOutline = variant === "outline";
+
   return (
     <TouchableOpacity
-      style={[styles.btn, disabled ? styles.btnOff : null]}
+      style={[
+        styles.btn,
+        isSecondary ? styles.btnSecondary : null,
+        isOutline ? styles.btnOutline : null,
+        disabled || loading ? styles.btnOff : null,
+      ]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator color="#F4E7BB" />
+        <ActivityIndicator color={isSecondary || isOutline ? colors.primary : colors.accent} />
       ) : (
-        <Text style={styles.txt}>{title}</Text>
+        <Text style={[styles.txt, isOutline ? styles.txtOutline : null, isSecondary ? styles.txtSecondary : null]}>{title}</Text>
       )}
     </TouchableOpacity>
   );
@@ -23,14 +29,26 @@ export default function Button({ title, onPress, disabled, loading }) {
 
 var styles = StyleSheet.create({
   btn: {
-    backgroundColor: "#353375",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 8,
     borderWidth: 2,
-    borderColor: "#F4E7BB",
+    borderColor: colors.accent,
+    minHeight: 52,
+    justifyContent: "center",
   },
-  btnOff: { opacity: 0.6 },
-  txt: { color: "#F4E7BB", fontSize: 16, fontWeight: "bold" },
+  btnSecondary: {
+    backgroundColor: colors.card,
+    borderColor: colors.primary,
+  },
+  btnOutline: {
+    backgroundColor: "transparent",
+    borderColor: colors.primary,
+  },
+  btnOff: { opacity: 0.55 },
+  txt: { color: colors.accent, fontSize: 16, fontWeight: "bold" },
+  txtSecondary: { color: colors.primary },
+  txtOutline: { color: colors.primary },
 });
