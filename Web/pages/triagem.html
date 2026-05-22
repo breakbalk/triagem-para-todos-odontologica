@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nova triagem - COE</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
 </head>
 <body class="bg-app" data-page="triagem">
 
@@ -12,6 +12,7 @@
         <div class="app-header-inner">
             <nav class="app-nav">
                 <a href="/pages/home.html" class="btn-nav btn-ghost">← Voltar</a>
+                <button type="button" class="btn-nav btn-logout" data-action="logout">Sair</button>
             </nav>
         </div>
     </header>
@@ -64,6 +65,11 @@
 
                 <button type="submit" class="btn-primary grid-full">ENVIAR TRIAGEM</button>
             </form>
+
+            <aside class="guia-documentos-fixo" aria-labelledby="guia-triagem-titulo">
+                <h3 id="guia-triagem-titulo">Antes de ir à clínica</h3>
+                <p class="guia-intro">Separe RG/CPF, Cartão SUS e comprovante de residência. A lista completa aparece após o envio da triagem.</p>
+            </aside>
         </section>
     </main>
 

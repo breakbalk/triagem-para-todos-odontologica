@@ -3,36 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação - COE</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>Confirmação de agendamento - COE</title>
+    <link rel="stylesheet" href="/css/style.min.css">
 </head>
 <body class="bg-app" data-page="confirmacao">
 
     <header class="app-header">
         <div class="app-header-inner">
-            <h1>Pré-agendamento</h1>
+            <h1>Confirmação de agendamento</h1>
             <nav class="app-nav">
-                <a href="/pages/home.html" class="btn-nav">Ir para início</a>
+                <a href="/pages/home.html" class="btn-nav">Início</a>
+                <button type="button" class="btn-nav btn-logout" data-action="logout">Sair</button>
             </nav>
         </div>
     </header>
 
     <main class="app-main">
         <section class="card-panel">
-            <!-- RF08 + RF09: resumo após envio; horário definitivo depende da equipe da clínica -->
             <h2>Recebemos sua solicitação</h2>
-            <div id="resumo-triagem" class="resumo-box"></div>
+            <p class="instrucao">Confira abaixo se a especialidade e o turno estão corretos — seus dados foram processados pelo sistema.</p>
 
-            <!-- RF10: orientações ao usuário -->
-            <div class="orientacoes">
-                <h3>Documentos necessários no atendimento</h3>
-                <ul>
-                    <li>Documento com foto (RG ou CNH);</li>
-                    <li>CPF;</li>
-                    <li>Cartão do SUS (se aplicável);</li>
-                    <li>Comprovante de residência recente.</li>
-                </ul>
+            <!-- RN15: destaque dinâmico de especialidade e turno -->
+            <div id="resumo-destaque" class="resumo-destaque-rn15" hidden>
+                <p class="resumo-label">Sua escolha registrada</p>
+                <h3 id="resumo-servico" class="resumo-servico">—</h3>
+                <p id="resumo-periodo" class="resumo-periodo">—</p>
             </div>
+
+            <!-- RF08 + RF09: resumo completo -->
+            <div id="resumo-triagem" class="resumo-box" aria-live="polite"></div>
+
+            <!-- RF10 + RN16: guia fixo e responsivo -->
+            <aside class="guia-documentos-fixo" aria-labelledby="guia-docs-titulo">
+                <h3 id="guia-docs-titulo">Documentos necessários no atendimento</h3>
+                <p class="guia-intro">Leve os documentos <strong>originais</strong> no dia da consulta na Clínica COE:</p>
+                <ul class="lista-documentos-fixa">
+                    <li><strong>Documento com foto:</strong> RG ou CNH válidos.</li>
+                    <li><strong>CPF:</strong> Cadastro de Pessoa Física.</li>
+                    <li><strong>Cartão do SUS:</strong> Cartão Nacional de Saúde (quando aplicável).</li>
+                    <li><strong>Comprovante de residência:</strong> Conta recente de água, luz ou telefone.</li>
+                </ul>
+            </aside>
         </section>
     </main>
 
