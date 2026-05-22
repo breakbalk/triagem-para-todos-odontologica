@@ -1,9 +1,5 @@
 /**
- * Entrada do app Expo — Sprint 1: autenticação + navegação.
- *
- * Ordem das telas (pilha):
- * Login → Cadastro / Recuperar senha
- * Depois de logado: Home
+ * Entrada do app Expo — Sprint 4: navegação e boot com tema unificado.
  */
 import React, { useState, useEffect } from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
@@ -20,6 +16,7 @@ import TriageScreen from "./src/screens/TriageScreen";
 import SuccessScreen from "./src/screens/SuccessScreen";
 
 import * as api from "./src/services/api";
+import { colors, stackScreenOptions } from "./src/theme";
 
 var Stack = createNativeStackNavigator();
 
@@ -68,9 +65,10 @@ export default function App() {
   if (carregando) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator size="large" color="#353375" />
-        <Text style={styles.bootTxt}>Abrindo COE...</Text>
-        <StatusBar style="light" />
+        <Text style={styles.bootLogo}>COE</Text>
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 16 }} />
+        <Text style={styles.bootTxt}>Carregando aplicativo...</Text>
+        <StatusBar style="dark" />
       </View>
     );
   }
@@ -78,14 +76,18 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <StatusBar style="dark" />
-        <Stack.Navigator initialRouteName={inicio} screenOptions={{ headerStyle: { backgroundColor: "#353375" }, headerTintColor: "#F4E7BB" }}>
+        <StatusBar style="light" />
+        <Stack.Navigator initialRouteName={inicio} screenOptions={stackScreenOptions}>
           <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Entrar", headerShown: false }} />
           <Stack.Screen name="Cadastro" component={RegisterScreen} options={{ title: "Nova conta" }} />
           <Stack.Screen name="Recuperar" component={RecoverPasswordScreen} options={{ title: "Recuperar senha" }} />
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Início", headerBackVisible: false }} />
           <Stack.Screen name="Triage" component={TriageScreen} options={{ title: "Nova triagem" }} />
-          <Stack.Screen name="Success" component={SuccessScreen} options={{ title: "Confirmação", headerLeft: function () { return null; } }} />
+          <Stack.Screen
+            name="Success"
+            component={SuccessScreen}
+            options={{ title: "Confirmação", gestureEnabled: false, headerBackVisible: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
@@ -93,6 +95,7 @@ export default function App() {
 }
 
 var styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f4f4fb" },
-  bootTxt: { marginTop: 12, color: "#353375" },
+  boot: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.bg },
+  bootLogo: { fontSize: 42, fontWeight: "800", color: colors.primary },
+  bootTxt: { marginTop: 12, color: colors.textMuted },
 });

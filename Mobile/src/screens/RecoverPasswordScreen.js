@@ -1,13 +1,14 @@
 /**
- * RF03 — Recuperar senha (Sprint 1).
- * Passo 1: pede o e-mail. Em modo demo o servidor devolve demo_token no JSON.
- * Passo 2: cola o token e define nova senha.
+ * RF03 — Recuperar senha (Sprint 1). Sprint 4: textos e passos mais claros.
  */
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import ScreenHeader from "../components/ScreenHeader";
+import Banner from "../components/Banner";
 import * as api from "../services/api";
+import { spacing } from "../theme";
 
 export default function RecoverPasswordScreen({ navigation }) {
   var [passo, setPasso] = useState(1);
@@ -17,40 +18,56 @@ export default function RecoverPasswordScreen({ navigation }) {
   var [loading, setLoading] = useState(false);
 
   async function pedirToken() {
+    if (!email.trim()) {
+      Alert.alert("Recuperar senha", "Informe o e-mail cadastrado.");
+      return;
+    }
     setLoading(true);
     var r = await api.esqueciSenha(email.trim());
     setLoading(false);
 
     if (!r.okHttp) {
-      Alert.alert("Erro", r.dados.error || "Falha.");
+      Alert.alert("Erro", r.dados.error || "Não foi possível processar o pedido.");
       return;
     }
 
-    Alert.alert("Próximo passo", r.dados.message || "Ok.");
     if (r.dados.demo_token) {
       setToken(r.dados.demo_token);
       setPasso(2);
+      Alert.alert("Próximo passo", "Em ambiente de demonstração, o token foi preenchido automaticamente.");
+    } else {
+      Alert.alert("Verifique seu e-mail", r.dados.message || "Se o e-mail existir, você receberá instruções.");
     }
   }
 
   async function salvarNovaSenha() {
+    if (!token.trim() || nova.length < 6) {
+      Alert.alert("Recuperar senha", "Informe o token e uma nova senha com pelo menos 6 caracteres.");
+      return;
+    }
     setLoading(true);
     var r = await api.redefinirSenha(email.trim(), token.trim(), nova);
     setLoading(false);
 
     if (!r.okHttp) {
-      Alert.alert("Erro", r.dados.error || "Falha.");
+      Alert.alert("Erro", r.dados.error || "Não foi possível redefinir a senha.");
       return;
     }
 
-    Alert.alert("Sucesso", "Faça login com a nova senha.");
-    navigation.navigate("Login");
+    Alert.alert("Senha atualizada", "Faça login com a nova senha.", [
+      { text: "OK", onPress: function () { navigation.navigate("Login"); } },
+    ]);
   }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.titulo}>Recuperar senha</Text>
+        <ScreenHeader
+          title="Recuperar senha"
+          subtitle={passo === 1 ? "Informe o e-mail da sua conta." : "Defina uma nova senha de acesso."}
+        />
+
+        {passo === 2 ? <Banner tone="info" message="Passo 2 de 2 — token e nova senha." /> : null}
 
         {passo === 1 ? (
           <View>
@@ -59,10 +76,9 @@ export default function RecoverPasswordScreen({ navigation }) {
           </View>
         ) : (
           <View>
-            <Text style={styles.hint}>Cole o token (modo demo) e a nova senha.</Text>
-            <Input label="Token" value={token} onChangeText={setToken} />
-            <Input label="Nova senha" value={nova} onChangeText={setNova} secureTextEntry />
-            <Button title="REDEFINIR" onPress={salvarNovaSenha} loading={loading} />
+            <Input label="Token" value={token} onChangeText={setToken} hint="No modo demonstração, o token vem preenchido automaticamente." />
+            <Input label="Nova senha" value={nova} onChangeText={setNova} secureTextEntry hint="Mínimo de 6 caracteres." />
+            <Button title="REDEFINIR SENHA" onPress={salvarNovaSenha} loading={loading} />
           </View>
         )}
 
@@ -75,9 +91,7 @@ export default function RecoverPasswordScreen({ navigation }) {
 }
 
 var styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, paddingTop: 48, backgroundColor: "#f4f4fb" },
-  titulo: { fontSize: 24, fontWeight: "800", color: "#353375", marginBottom: 16 },
-  hint: { color: "#555", marginBottom: 12 },
+  container: { flexGrow: 1, padding: spacing.screen, paddingTop: 16, backgroundColor: colors.bg },
   linkBox: { marginTop: 24 },
-  link: { color: "#353375", fontWeight: "700", textAlign: "center" },
+  link: { color: colors.primary, fontWeight: "700", textAlign: "center" },
 });
