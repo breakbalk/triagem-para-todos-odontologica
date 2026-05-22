@@ -2,7 +2,9 @@ import React, { useMemo, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import ScreenHeader from "../components/ScreenHeader";
 import * as api from "../services/api";
+import { colors, spacing } from "../theme";
 
 var SERVICOS = [
   { value: "tratamento_geral", label: "Tratamento geral" },
@@ -40,17 +42,17 @@ export default function TriageScreen({ navigation }) {
   }, [telefone]);
 
   function validar() {
-    if (nome.trim().length < 3) return "Informe o nome completo.";
+    if (nome.trim().length < 3) return "Informe o nome completo (mínimo 3 caracteres).";
     if (!TEL_RE.test(telefoneLimpo)) return "Telefone inválido. Use o formato (DD) 99999-9999.";
     if (!servico) return "Selecione o tipo de serviço.";
-    if (!periodo) return "Selecione o período.";
+    if (!periodo) return "Selecione o período de atendimento.";
     return "";
   }
 
   async function enviar() {
     var erro = validar();
     if (erro) {
-      Alert.alert("Triagem", erro);
+      Alert.alert("Dados incompletos", erro);
       return;
     }
     setLoading(true);
@@ -64,7 +66,8 @@ export default function TriageScreen({ navigation }) {
     setLoading(false);
 
     if (!r.okHttp) {
-      Alert.alert("Triagem", r.dados.error ? r.dados.error : "Erro ao enviar triagem.");
+      var msgErro = r.dados.error ? r.dados.error : "Não foi possível enviar a triagem. Tente novamente.";
+      Alert.alert("Erro no envio", msgErro);
       if (r.dados && r.dados.error && r.dados.error.toLowerCase().indexOf("login") >= 0) {
         navigation.reset({ index: 0, routes: [{ name: "Login" }] });
       }
@@ -72,7 +75,7 @@ export default function TriageScreen({ navigation }) {
     }
 
     if (r.dados && r.dados.source === "local") {
-      Alert.alert("Triagem", r.dados.message || "Triagem salva localmente.");
+      Alert.alert("Sem conexão", r.dados.message || "Triagem salva no aparelho. Será enviada quando a internet voltar.");
     }
     navigation.replace("Success", { triagem: r.dados.triagem });
   }
@@ -80,10 +83,9 @@ export default function TriageScreen({ navigation }) {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.titulo}>Nova triagem</Text>
-        <Text style={styles.subtitulo}>Preencha os dados para pré-agendamento.</Text>
+        <ScreenHeader title="Nova triagem" subtitle="Preencha os dados para pré-agendamento na COE." />
 
-        <Input label="Nome completo" value={nome} onChangeText={setNome} autoCapitalize="words" />
+        <Input label="Nome completo" value={nome} onChangeText={setNome} autoCapitalize="words" placeholder="Ex.: Maria Silva" />
         <Input
           label="Telefone"
           value={telefone}
@@ -91,6 +93,8 @@ export default function TriageScreen({ navigation }) {
             setTelefone(mascaraTelefone(txt));
           }}
           keyboardType="phone-pad"
+          placeholder="(62) 99999-9999"
+          hint="Informe DDD + número com 9 dígitos."
         />
 
         <Text style={styles.label}>Serviço</Text>
@@ -98,7 +102,13 @@ export default function TriageScreen({ navigation }) {
           {SERVICOS.map(function (s) {
             var ativo = servico === s.value;
             return (
-              <TouchableOpacity key={s.value} onPress={function () { setServico(s.value); }} style={[styles.chip, ativo ? styles.chipOn : null]}>
+              <TouchableOpacity
+                key={s.value}
+                onPress={function () { setServico(s.value); }}
+                style={[styles.chip, ativo ? styles.chipOn : null]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: ativo }}
+              >
                 <Text style={[styles.chipTxt, ativo ? styles.chipTxtOn : null]}>{s.label}</Text>
               </TouchableOpacity>
             );
@@ -110,7 +120,13 @@ export default function TriageScreen({ navigation }) {
           {PERIODOS.map(function (p) {
             var ativo = periodo === p.value;
             return (
-              <TouchableOpacity key={p.value} onPress={function () { setPeriodo(p.value); }} style={[styles.chip, ativo ? styles.chipOn : null]}>
+              <TouchableOpacity
+                key={p.value}
+                onPress={function () { setPeriodo(p.value); }}
+                style={[styles.chip, ativo ? styles.chipOn : null]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: ativo }}
+              >
                 <Text style={[styles.chipTxt, ativo ? styles.chipTxtOn : null]}>{p.label}</Text>
               </TouchableOpacity>
             );
@@ -122,6 +138,7 @@ export default function TriageScreen({ navigation }) {
           value={sintomas}
           onChangeText={setSintomas}
           autoCapitalize="sentences"
+          placeholder="Descreva brevemente o motivo da consulta"
         />
 
         <Button title="ENVIAR TRIAGEM" onPress={enviar} loading={loading} />
@@ -131,22 +148,20 @@ export default function TriageScreen({ navigation }) {
 }
 
 var styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 24, paddingTop: 24, backgroundColor: "#f4f4fb" },
-  titulo: { fontSize: 26, fontWeight: "800", color: "#353375" },
-  subtitulo: { color: "#555", marginTop: 6, marginBottom: 18 },
-  label: { color: "#353375", fontWeight: "700", marginBottom: 8, marginTop: 8, fontSize: 14 },
+  container: { flexGrow: 1, padding: spacing.screen, paddingTop: 8, backgroundColor: colors.bg },
+  label: { color: colors.primary, fontWeight: "700", marginBottom: 8, marginTop: 4, fontSize: 14 },
   rowWrap: { flexDirection: "row", flexWrap: "wrap", marginBottom: 6 },
   chip: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: colors.border,
     borderRadius: 999,
     paddingVertical: 10,
     paddingHorizontal: 14,
     marginRight: 8,
     marginBottom: 8,
   },
-  chipOn: { backgroundColor: "#353375", borderColor: "#353375" },
-  chipTxt: { color: "#333", fontWeight: "600" },
-  chipTxtOn: { color: "#F4E7BB" },
+  chipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
+  chipTxt: { color: colors.text, fontWeight: "600" },
+  chipTxtOn: { color: colors.accent },
 });
