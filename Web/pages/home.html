@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Início - COE</title>
-    <link rel="stylesheet" href="/css/style.min.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body data-page="home">
 
     <div class="video-container">
         <video autoplay muted loop playsinline preload="none" id="bg-video">
-            <source src="/assets/video/home_video.mp4" type="video/mp4">
+            <source src="../assets/video/home_video.mp4" type="video/mp4">
         </video>
         <div class="overlay-fix"></div>
     </div>
@@ -22,23 +22,24 @@
                 <a href="https://wa.me/5562999640607?text=Olá!%20Gostaria%20de%20mais%20informações%20sobre%20a%20triagem%20da%20clínica%20COE."
                    target="_blank"
                    rel="noopener noreferrer"
-                   class="whatsapp-link">
-                    <img src="../assets/img/home_whatsapp_logo.png" alt="WhatsApp" class="icon-whatsapp" width="40" height="40">
+                   class="whatsapp-link"
+                   aria-label="Contato WhatsApp">
+                    <img src="../assets/img/home_whatsapp_logo.png" alt="" class="icon-whatsapp" width="40" height="40">
                 </a>
                 <a href="#" class="menu-docs">Documentos necessários</a>
             </div>
 
             <div class="header-right">
-                <img src="/assets/img/home_dente.png" alt="" class="dente-topo" width="48" height="48">
+                <img src="../assets/img/home_dente.png" alt="" class="dente-topo" width="40" height="40">
                 <span class="admin-label">Área do paciente</span>
-                <a href="/pages/admin.html" id="link-admin" class="btn-panel" style="display:none">Painel equipe</a>
+                <a href="admin.html" id="link-admin" class="btn-panel" style="display:none">Painel equipe</a>
                 <a href="#" class="btn-exit" data-action="logout">Sair</a>
             </div>
         </header>
 
         <main class="main-layout">
             <div class="content-left">
-                <img src="/assets/img/coe_logo.png" alt="Logo COE" class="logo-main" width="280" height="auto">
+                <img src="../assets/img/coe_logo.png" alt="Logo COE" class="logo-main" width="280" height="auto">
 
                 <p class="home-welcome">Olá, <span id="home-nome">visitante</span>!</p>
 
@@ -47,16 +48,16 @@
                     <p>Apresentamos a você a triagem mais moderna da região.</p>
                 </div>
 
-                <a href="/pages/triagem.html" class="btn-triagem-coe">NOVA TRIAGEM</a>
+                <a href="triagem.html" class="btn-triagem-coe">NOVA TRIAGEM</a>
 
                 <div class="recent-requests">
                     <h3>Suas solicitações recentes</h3>
                     <ul id="lista-triagens"></ul>
                 </div>
             </div>
-        </main>
 
-        <img src="/assets/img/home_decoracao.png" alt="" class="mario-decor" loading="lazy" width="200" height="auto">
+            <img src="../assets/img/home_decoracao.png" alt="" class="mario-decor" loading="lazy" width="320" height="auto">
+        </main>
     </div>
 
     <div id="modal-documentos" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-docs-title">
@@ -77,6 +78,6 @@
         </div>
     </div>
 
-    <script src="/js/web-app.js" defer></script>
+    <script src="../js/web-app.js" defer></script>
 </body>
 </html>
