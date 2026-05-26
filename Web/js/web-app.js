@@ -334,9 +334,9 @@ async function iniciarHome() {
       escapeHtml(nomeServico) +
       " — " +
       escapeHtml(nomePeriodo) +
-      " — <em>" +
+      ' — <span class="triagem-status">' +
       escapeHtml(t.status) +
-      "</em>";
+      "</span>";
     ul.appendChild(li);
   }
 }
