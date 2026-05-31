@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import ScreenHeader from "../components/ScreenHeader";
 import Banner from "../components/Banner";
 import * as api from "../services/api";
-import { spacing } from "../theme";
+import { colors, spacing } from "../theme";
 
 export default function RecoverPasswordScreen({ navigation }) {
   var [passo, setPasso] = useState(1);
