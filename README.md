@@ -220,6 +220,17 @@ O sistema contribui para:
 
 ---
 
+## 🧪 Garantia da Qualidade (QA)
+
+Estrutura de validação e testes para a disciplina de QA do ecossistema COE Digital:
+
+- **`Web/backend/tests/`**: Testes unitários e de integração das APIs em Python/Flask.
+- **`/tests/api`**: Coleções do Postman para medição de tempo de resposta ($\le 2,0\text{s}$) e regras RLS do Supabase.
+- **`/tests/e2e`**: Auditorias de usabilidade, responsividade e acessibilidade via Google Lighthouse.
+- **`/tests/fixtures`**: Massa de dados sintéticos e fictícios para execução dos testes operacionais (T01 a T07).
+
+---
+
 ## 📄 Licença
 
 Este projeto foi desenvolvido para fins acadêmicos.
