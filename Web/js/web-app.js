@@ -169,6 +169,20 @@ function iniciarLogin() {
 // --- CADASTRO (RF01) ---
 
 function iniciarCadastro() {
+  var campoTel = document.getElementById("telefone");
+  if (campoTel) {
+    campoTel.addEventListener("input", function () {
+      mascaraTelefone(this);
+    });
+  }
+
+  var campoCpf = document.getElementById("cpf");
+  if (campoCpf) {
+    campoCpf.addEventListener("input", function () {
+      mascaraCPF(this);
+    });
+  }
+
   var form = document.getElementById("form-cadastro");
   if (!form) return;
 
@@ -630,4 +644,22 @@ async function atualizarStatusBanco(protocolo, novoStatus) {
         console.error("Falha na comunicação:", error);
         alert("Não foi possível salvar o status. " + (error && error.message ? error.message : ""));
     }
+}
+
+/**
+ * Aplica a máscara 000.000.000-00 no input de CPF
+ */
+
+function mascaraCPF(input) {
+  var v = input.value.replace(/\D/g, ""); // Remove tudo que não é dígito
+  if (v.length > 11) v = v.slice(0, 11);
+
+  if (v.length > 9) {
+    v = v.substring(0, 3) + "." + v.substring(3, 6) + "." + v.substring(6, 9) + "-" + v.substring(9);
+  } else if (v.length > 6) {
+    v = v.substring(0, 3) + "." + v.substring(3, 6) + "." + v.substring(6);
+  } else if (v.length > 3) {
+    v = v.substring(0, 3) + "." + v.substring(3);
+  }
+  input.value = v;
 }
