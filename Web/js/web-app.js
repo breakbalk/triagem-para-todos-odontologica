@@ -192,6 +192,8 @@ function iniciarCadastro() {
 
     var nome = document.getElementById("username").value.trim();
     var email = document.getElementById("email").value.trim();
+    var cpfEl = document.getElementById("cpf");
+    var cpf = cpfEl ? cpfEl.value.trim() : "";
     var senha = document.getElementById("senha").value;
     var confirmar = document.getElementById("confirmar_senha").value;
     var telEl = document.getElementById("telefone");
@@ -199,6 +201,14 @@ function iniciarCadastro() {
 
     if (nome.length < 3) {
       mostrarErro("O nome deve ter pelo menos 3 caracteres.");
+      return;
+    }
+    if (!cpf) {
+      mostrarErro("O campo CPF é obrigatório.");
+      return;
+    }
+    if (cpf.length < 14) {
+      mostrarErro("Por favor, informe um CPF válido no formato 000.000.000-00.");
       return;
     }
     if (senha !== confirmar) {
