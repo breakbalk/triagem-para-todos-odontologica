@@ -178,7 +178,7 @@ def api_register():
         h = generate_password_hash(senha)
         user = storage.criar_usuario(nome, email, h, telefone)
     except ValueError as e:
-        return jsonify({"ok": False, "error": str(e)}), 409
+        return jsonify({"ok": False, "error": str(e)}), 400
 
     session.clear()
     session["user_id"] = user["id"]
