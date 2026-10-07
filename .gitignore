@@ -9,6 +9,3 @@ Web/.env
 # Python
 __pycache__/
 *.py[cod]
-
-# Logs de carga da massa sintética
-scripts/logs/
