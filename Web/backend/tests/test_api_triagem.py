@@ -178,6 +178,29 @@ class AuthAndAdminCompatTest(unittest.TestCase):
             self.assertTrue(app_module.usuario_tem_acesso_admin())
 
 
+class ValidarCpfTest(unittest.TestCase):
+    """Dígitos verificadores do CPF (validar_cpf)."""
+
+    def test_cpf_valido_com_e_sem_mascara(self):
+        for cpf in ("123.456.789-09", "12345678909", "529.982.247-25"):
+            with self.subTest(cpf=cpf):
+                self.assertTrue(app_module.validar_cpf(cpf))
+
+    def test_sequencia_repetida(self):
+        for cpf in ("111.111.111-11", "00000000000", "99999999999"):
+            with self.subTest(cpf=cpf):
+                self.assertFalse(app_module.validar_cpf(cpf))
+
+    def test_digito_verificador_errado(self):
+        self.assertFalse(app_module.validar_cpf("123.456.789-19"))  # 1º dígito errado
+        self.assertFalse(app_module.validar_cpf("123.456.789-00"))  # 2º dígito errado
+
+    def test_tamanho_errado(self):
+        for cpf in ("", None, "1234567890", "123456789090"):
+            with self.subTest(cpf=cpf):
+                self.assertFalse(app_module.validar_cpf(cpf))
+
+
 class CadastroCpfTest(unittest.TestCase):
     """CPF do cadastro: grava só os 11 números e não aceita repetido."""
 
@@ -214,6 +237,15 @@ class CadastroCpfTest(unittest.TestCase):
         r = self._cadastrar()
         self.assertEqual(r.status_code, 200, r.get_json())
         self.assertIsNone(mock_criar.call_args.args[4])
+
+    @patch.object(app_module.storage, "criar_usuario")
+    def test_cpf_com_digito_errado_400_e_nao_grava(self, mock_criar):
+        for cpf in ("123.456.789-00", "111.111.111-11"):
+            with self.subTest(cpf=cpf):
+                r = self._cadastrar(cpf=cpf)
+                self.assertEqual(r.status_code, 400)
+                self.assertIn("CPF inválido", r.get_json()["error"])
+        mock_criar.assert_not_called()
 
     @patch.object(app_module.storage, "criar_usuario", side_effect=ValueError("CPF já cadastrado."))
     def test_cpf_repetido_400(self, _criar):
@@ -253,7 +285,7 @@ class CpfNoArmazenamentoTest(unittest.TestCase):
 
         sb = self._supabase_com_erro('duplicate key value violates unique constraint "usuarios_email_key"')
         with patch.object(storage_supabase, "_sb", return_value=sb):
-            with self.assertRaisesRegex(ValueError, "E-mail já cadastrado"):
+            with self.assertRaisesRegex(ValueError, "E-mail ou CPF já cadastrado"):
                 storage_supabase.criar_usuario("Ana", "ana@example.com", "h")
 
 
