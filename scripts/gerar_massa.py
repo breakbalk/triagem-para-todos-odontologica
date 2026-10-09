@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Card 1.3 — Geração e carga de massa sintética (LGPD).
+Card 1.3 [T03.1/MQ03.1] — Geração e carga de massa sintética (LGPD).
 
 Gera usuários (pacientes) e triagens FICTÍCIOS e grava no Supabase usando o mesmo
 formato que o backend (Web/backend/storage_supabase.py) usa.
