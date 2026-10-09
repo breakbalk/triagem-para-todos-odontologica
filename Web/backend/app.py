@@ -206,8 +206,8 @@ def api_register():
         return jsonify({"ok": False, "error": "Senha deve ter ao menos 6 caracteres."}), 400
     # CPF é opcional na API (o app mobile não pede); quando vem, grava só os 11 números.
     if cpf:
-    if not validar_cpf(cpf):
-        return jsonify({"ok": False, "error": "CPF inválido (dígitos verificadores incorretos ou sequência inválida)."}), 400
+        if not validar_cpf(cpf):
+            return jsonify({"ok": False, "error": "CPF inválido (dígitos verificadores incorretos ou sequência inválida)."}), 400
     try:
         h = generate_password_hash(senha)
         user = storage.criar_usuario(nome, email, h, telefone, cpf or None)
