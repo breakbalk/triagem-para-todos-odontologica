@@ -4,7 +4,7 @@
 import json
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 os.environ.setdefault("COE_STORAGE", "json")
 os.environ.setdefault("FLASK_SECRET_KEY", "test-secret-ci")
@@ -176,6 +176,85 @@ class AuthAndAdminCompatTest(unittest.TestCase):
         }
         with patch.dict(os.environ, {"COE_SECRETARIA_EMAILS": "sec@coe.local"}, clear=False):
             self.assertTrue(app_module.usuario_tem_acesso_admin())
+
+
+class CadastroCpfTest(unittest.TestCase):
+    """CPF do cadastro: grava só os 11 números e não aceita repetido."""
+
+    USUARIO = {"id": 1, "nome": "Fulano Teste", "email": "fulano@example.com", "telefone": "", "is_admin": False}
+
+    def setUp(self):
+        app_module.app.config["TESTING"] = True
+        self.client = app_module.app.test_client()
+
+    def _cadastrar(self, **extra):
+        body = {"nome": "Fulano Teste", "email": "fulano@example.com", "senha": "Senha@123"}
+        body.update(extra)
+        return self.client.post("/api/auth/register", data=json.dumps(body), content_type="application/json")
+
+    @patch.object(app_module.storage, "criar_token_mobile", return_value="tok-1")
+    @patch.object(app_module.storage, "criar_usuario")
+    def test_cpf_com_mascara_grava_so_numeros(self, mock_criar, _tok):
+        mock_criar.return_value = self.USUARIO
+        r = self._cadastrar(cpf="123.456.789-09")
+        self.assertEqual(r.status_code, 200, r.get_json())
+        self.assertEqual(mock_criar.call_args.args[4], "12345678909")
+
+    @patch.object(app_module.storage, "criar_usuario")
+    def test_cpf_incompleto_400_e_nao_grava(self, mock_criar):
+        r = self._cadastrar(cpf="123.456.789")
+        self.assertEqual(r.status_code, 400)
+        mock_criar.assert_not_called()
+
+    @patch.object(app_module.storage, "criar_token_mobile", return_value="tok-1")
+    @patch.object(app_module.storage, "criar_usuario")
+    def test_sem_cpf_continua_funcionando(self, mock_criar, _tok):
+        """O app mobile não manda CPF."""
+        mock_criar.return_value = self.USUARIO
+        r = self._cadastrar()
+        self.assertEqual(r.status_code, 200, r.get_json())
+        self.assertIsNone(mock_criar.call_args.args[4])
+
+    @patch.object(app_module.storage, "criar_usuario", side_effect=ValueError("CPF já cadastrado."))
+    def test_cpf_repetido_400(self, _criar):
+        r = self._cadastrar(cpf="123.456.789-09")
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.get_json()["error"], "CPF já cadastrado.")
+
+
+class CpfNoArmazenamentoTest(unittest.TestCase):
+    def test_json_recusa_cpf_repetido(self):
+        import storage_json
+
+        with patch.object(storage_json, "dados", storage_json._estado_vazio()), patch.object(storage_json, "_salvar"):
+            storage_json.criar_usuario("Ana", "ana@example.com", "h", "", "12345678909")
+            with self.assertRaisesRegex(ValueError, "CPF já cadastrado"):
+                storage_json.criar_usuario("Bia", "bia@example.com", "h", "", "12345678909")
+            # sem CPF não conflita com outro sem CPF
+            storage_json.criar_usuario("Caio", "caio@example.com", "h")
+            storage_json.criar_usuario("Duda", "duda@example.com", "h")
+
+    def _supabase_com_erro(self, mensagem):
+        sb = MagicMock()
+        sb.table.return_value.insert.return_value.execute.side_effect = Exception(mensagem)
+        return sb
+
+    def test_supabase_grava_cpf_e_traduz_repetido(self):
+        import storage_supabase
+
+        sb = self._supabase_com_erro('duplicate key value violates unique constraint "usuarios_cpf_key"')
+        with patch.object(storage_supabase, "_sb", return_value=sb):
+            with self.assertRaisesRegex(ValueError, "CPF já cadastrado"):
+                storage_supabase.criar_usuario("Ana", "ana@example.com", "h", "", "12345678909")
+        self.assertEqual(sb.table.return_value.insert.call_args.args[0]["cpf"], "12345678909")
+
+    def test_supabase_email_repetido_continua_igual(self):
+        import storage_supabase
+
+        sb = self._supabase_com_erro('duplicate key value violates unique constraint "usuarios_email_key"')
+        with patch.object(storage_supabase, "_sb", return_value=sb):
+            with self.assertRaisesRegex(ValueError, "E-mail já cadastrado"):
+                storage_supabase.criar_usuario("Ana", "ana@example.com", "h")
 
 
 class HealthTest(unittest.TestCase):
