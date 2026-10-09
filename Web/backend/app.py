@@ -55,6 +55,31 @@ def cpf_somente_numeros(valor):
     """Tira a máscara do front: '123.456.789-09' -> '12345678909'."""
     return re.sub(r"\D", "", str(valor or ""))
 
+def validar_cpf(cpf_bruto):
+    """Validação matemática estrita dos dígitos verificadores do CPF."""
+    cpf = "".join(filter(str.isdigit, str(cpf_bruto)))
+    
+    # Verifica se tem 11 dígitos ou se é uma sequência repetida (ex: 111.111.111-11)
+    if len(cpf) != 11 or cpf == cpf[0] * 11:
+        return False
+        
+    # Cálculo do 1º dígito verificador
+    soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
+    resto = (soma * 10) % 11
+    digito1 = 0 if resto == 10 else resto
+    
+    if digito1 != int(cpf[9]):
+        return False
+        
+    # Cálculo do 2º dígito verificador
+    soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
+    resto = (soma * 10) % 11
+    digito2 = 0 if resto == 10 else resto
+    
+    if digito2 != int(cpf[10]):
+        return False
+        
+    return True
 
 def nivel_acesso_do_usuario(u):
     """Níveis suportados no relatório: comum, secretaria, admin."""
@@ -180,9 +205,9 @@ def api_register():
     if len(senha) < 6:
         return jsonify({"ok": False, "error": "Senha deve ter ao menos 6 caracteres."}), 400
     # CPF é opcional na API (o app mobile não pede); quando vem, grava só os 11 números.
-    if cpf and len(cpf) != 11:
-        return jsonify({"ok": False, "error": "CPF deve ter 11 números."}), 400
-
+    if cpf:
+    if not validar_cpf(cpf):
+        return jsonify({"ok": False, "error": "CPF inválido (dígitos verificadores incorretos ou sequência inválida)."}), 400
     try:
         h = generate_password_hash(senha)
         user = storage.criar_usuario(nome, email, h, telefone, cpf or None)
