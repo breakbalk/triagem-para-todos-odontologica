@@ -51,6 +51,11 @@ def telefone_valido_rn09(valor):
     return bool(_TELEFONE_RN09.match((valor or "").strip()))
 
 
+def cpf_somente_numeros(valor):
+    """Tira a máscara do front: '123.456.789-09' -> '12345678909'."""
+    return re.sub(r"\D", "", str(valor or ""))
+
+
 def nivel_acesso_do_usuario(u):
     """Níveis suportados no relatório: comum, secretaria, admin."""
     if not u:
@@ -166,8 +171,7 @@ def api_register():
     email = (body.get("email") or "").strip()
     senha = body.get("senha") or ""
     telefone = (body.get("telefone") or "").strip()
-    cpf_bruto = (body.get("cpf") or "").strip()
-    cpf_limpo = "".join(filter(str.isdigit, cpf_bruto))
+    cpf = cpf_somente_numeros(body.get("cpf"))
 
     if len(nome) < 3:
         return jsonify({"ok": False, "error": "Nome deve ter ao menos 3 caracteres."}), 400
@@ -175,13 +179,13 @@ def api_register():
         return jsonify({"ok": False, "error": "E-mail inválido."}), 400
     if len(senha) < 6:
         return jsonify({"ok": False, "error": "Senha deve ter ao menos 6 caracteres."}), 400
-    # 3. Validar se o CPF tem exatamente 11 dígitos
-    if len(cpf_limpo) != 11:
-        return jsonify({"ok": False, "error": "CPF inválido. Informe os 11 dígitos."}), 400
+    # CPF é opcional na API (o app mobile não pede); quando vem, grava só os 11 números.
+    if cpf and len(cpf) != 11:
+        return jsonify({"ok": False, "error": "CPF deve ter 11 números."}), 400
 
     try:
         h = generate_password_hash(senha)
-        user = storage.criar_usuario(nome, email, h, telefone, cpf_limpo)
+        user = storage.criar_usuario(nome, email, h, telefone, cpf or None)
     except ValueError as e:
         return jsonify({"ok": False, "error": str(e)}), 400
 

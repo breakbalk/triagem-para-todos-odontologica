@@ -2,7 +2,7 @@
 """
 Persistência no Supabase conforme MER da equipe:
 
-- public.usuarios (id_usuario uuid, nome, email, senha, telefone, data_criacao)
+- public.usuarios (id_usuario uuid, nome, email, senha, telefone, cpf, data_criacao)
 - public.triagens (id_triagem uuid, usuario_id, servico, periodo, solicitacao_dados, data_triagem)
 
 Campos extras do app (nome/telefone na triagem, sintomas, status, protocolo) ficam em
@@ -135,7 +135,7 @@ def buscar_usuario_por_id(user_id):
     return _row_user(r.data[0])
 
 
-def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
+def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     email = email.strip().lower()
     tel = (telefone or "").strip() or None
     cpf_limpo = (cpf or "").strip() or None
@@ -149,13 +149,15 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
                     "email": email,
                     "senha": password_hash,
                     "telefone": tel,
-                    "cpf": cpf_limpo,
+                    "cpf": cpf or None,
                 }
             )
             .execute()
         )
     except Exception as e:
         msg = str(e).lower()
+        if "usuarios_cpf_key" in msg:
+            raise ValueError("CPF já cadastrado.") from e
         if "duplicate" in msg or "unique" in msg or "23505" in msg:
             raise ValueError("E-mail ou CPF já cadastrado.") from e
         raise

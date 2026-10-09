@@ -9,7 +9,7 @@ Garantias de anonimização:
 - nomes vêm do Faker (pt_BR), nunca de arquivo real;
 - e-mails sempre em @example.com (domínio reservado, RFC 2606 — não pertence a ninguém);
 - telefones no formato RN09 "(DD) 9XXXX-XXXX" com DDD fictício e número sorteado;
-- CPF NÃO é gravado (o banco não tem coluna de CPF);
+- CPF NÃO é gravado (a coluna cpf é opcional e fica vazia na massa);
 - todo registro é marcado (e-mail sintetico.NNNN@example.com e "origem": "massa_sintetica"),
   o que permite apagar só a massa com --limpar.
 

@@ -99,11 +99,13 @@ def buscar_usuario_por_id(user_id):
     return dados["users"].get(uid)
 
 
-def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
+def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     email = email.strip().lower()
     cpf_limpo = (cpf or "").strip()
     if email in dados["users_by_email"]:
         raise ValueError("E-mail já cadastrado.")
+    if cpf and any(u.get("cpf") == cpf for u in dados["users"].values()):
+        raise ValueError("CPF já cadastrado.")
 
     uid = str(dados["next_user_id"])
     registro = {
@@ -112,7 +114,7 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
         "email": email,
         "password_hash": password_hash,
         "telefone": (telefone or "").strip(),
-        "cpf": cpf_limpo,
+        "cpf": cpf or None,
         "is_admin": False,
     }
     dados["users"][uid] = registro

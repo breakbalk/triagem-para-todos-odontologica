@@ -10,8 +10,16 @@ create table if not exists public.usuarios (
   email varchar not null unique,
   senha text not null,
   telefone varchar(15),
+  -- CPF opcional (o app mobile não pede): só os 11 números, sem repetir.
+  cpf text constraint usuarios_cpf_key unique
+           constraint usuarios_cpf_formato check (cpf ~ '^[0-9]{11}$'),
   data_criacao timestamptz default now()
 );
+
+-- Banco criado antes do CPF (o do projeto recebeu isto em 09/10/2026, migração add_cpf_usuarios):
+-- alter table public.usuarios add column cpf text;
+-- alter table public.usuarios add constraint usuarios_cpf_formato check (cpf ~ '^[0-9]{11}$');
+-- alter table public.usuarios add constraint usuarios_cpf_key unique (cpf);
 
 create table if not exists public.triagens (
   id_triagem uuid primary key default gen_random_uuid(),
