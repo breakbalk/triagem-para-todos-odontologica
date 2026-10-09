@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Card 1.3 [T03/MQ03] — Geração e carga de massa sintética (LGPD).
+Card 1.3 — Geração e carga de massa sintética (LGPD).
 
 Gera usuários (pacientes) e triagens FICTÍCIOS e grava no Supabase usando o mesmo
 formato que o backend (Web/backend/storage_supabase.py) usa.
@@ -8,7 +8,8 @@ formato que o backend (Web/backend/storage_supabase.py) usa.
 Garantias de anonimização:
 - nomes vêm do Faker (pt_BR), nunca de arquivo real;
 - e-mails sempre em @example.com (domínio reservado, RFC 2606 — não pertence a ninguém);
-- telefones no formato RN09 "(DD) 9XXXX-XXXX" com DDD fictício e número sorteado;
+- telefones no formato RN09 "(00) 9XXXX-XXXX": o DDD 00 não existe no Brasil, então nenhum
+  número gerado pode pertencer a uma pessoa real (a clínica não consegue ligar nem chamar no WhatsApp);
 - CPF NÃO é gravado (a coluna cpf é opcional e fica vazia na massa);
 - todo registro é marcado (e-mail sintetico.NNNN@example.com e "origem": "massa_sintetica"),
   o que permite apagar só a massa com --limpar.
@@ -21,6 +22,11 @@ Uso (a partir da raiz do repositório):
     python scripts/gerar_massa.py --limpar              # remove só a massa sintética
 
 Credenciais: lê SUPABASE_URL e SUPABASE_KEY de Web/backend/.env (nunca commitar).
+
+Senha das contas sintéticas: lida de MASSA_SENHA (no .env). Se não existir, é gerada uma senha
+aleatória a cada execução e descartada (as contas ficam sem login possível). Nunca há senha fixa no código.
+
+ATENÇÃO: apague a massa com --limpar antes de qualquer uso do banco pela clínica.
 """
 
 import argparse
@@ -29,6 +35,7 @@ import logging
 import os
 import random
 import re
+import secrets
 import sys
 from datetime import datetime, timedelta, timezone
 
@@ -46,8 +53,8 @@ STATUS = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"]
 DOMINIO_SINTETICO = "example.com"
 PREFIXO_EMAIL = "sintetico."
 ORIGEM = "massa_sintetica"
-# Senha única de teste (não é senha real de ninguém); o hash é gerado na carga.
-SENHA_TESTE = "Teste@2026"
+# DDD inexistente no Brasil: garante que nenhum telefone sintético seja real.
+DDD_FICTICIO = "00"
 
 SINTOMAS = [
     "Dor de dente ao mastigar",
@@ -62,6 +69,7 @@ SINTOMAS = [
 ]
 
 RE_TELEFONE_RN09 = re.compile(r"^\(\d{2}\) \d{5}-\d{4}$")
+RE_TELEFONE_SINTETICO = re.compile(r"^\(00\) 9\d{4}-\d{4}$")
 RE_EMAIL_SINTETICO = re.compile(r"^sintetico\.\d{4,}@example\.com$")
 
 log = logging.getLogger("gerar_massa")
@@ -81,8 +89,7 @@ def configurar_log():
 def gerar_usuarios(fake, n, rng):
     usuarios = []
     for i in range(1, n + 1):
-        ddd = rng.choice(["62", "61", "64", "11", "21"])
-        tel = "(%s) 9%04d-%04d" % (ddd, rng.randint(0, 9999), rng.randint(0, 9999))
+        tel = "(%s) 9%04d-%04d" % (DDD_FICTICIO, rng.randint(0, 9999), rng.randint(0, 9999))
         usuarios.append(
             {
                 "nome": fake.name(),
@@ -111,25 +118,32 @@ def gerar_triagem(fake, usuario, rng, agora):
     }
 
 
+def _exigir(condicao, mensagem):
+    # if/raise (e não assert) para a auditoria continuar valendo com python -O
+    if not condicao:
+        raise ValueError(mensagem)
+
+
 def auditar_pii(usuarios, triagens_por_usuario):
-    """Falha (AssertionError) se qualquer registro não parecer 100% sintético."""
+    """Levanta ValueError se qualquer registro não parecer 100% sintético."""
     emails = set()
     for u in usuarios:
-        assert RE_EMAIL_SINTETICO.match(u["email"]), "e-mail fora do padrão sintético: %s" % u["email"]
-        assert RE_TELEFONE_RN09.match(u["telefone"]), "telefone fora do RN09: %s" % u["telefone"]
-        assert u["email"] not in emails, "e-mail duplicado: %s" % u["email"]
+        _exigir(RE_EMAIL_SINTETICO.match(u["email"]), "e-mail fora do padrão sintético: %s" % u["email"])
+        _exigir(RE_TELEFONE_RN09.match(u["telefone"]), "telefone fora do RN09: %s" % u["telefone"])
+        _exigir(RE_TELEFONE_SINTETICO.match(u["telefone"]), "telefone com DDD real: %s" % u["telefone"])
+        _exigir(u["email"] not in emails, "e-mail duplicado: %s" % u["email"])
+        _exigir("cpf" not in u, "CPF não deve ser gravado")
         emails.add(u["email"])
     for lista in triagens_por_usuario:
         for t in lista:
-            assert t["servico"] in SERVICOS and t["periodo"] in PERIODOS
-            assert t["extra"]["origem"] == ORIGEM
-            assert "cpf" not in json.dumps(t["extra"]).lower(), "CPF não deve ser gravado"
+            _exigir(t["servico"] in SERVICOS and t["periodo"] in PERIODOS, "serviço/período inválido")
+            _exigir(t["extra"]["origem"] == ORIGEM, "registro sem marcação de origem")
+            _exigir("cpf" not in json.dumps(t["extra"]).lower(), "CPF não deve ser gravado")
     # nenhuma chave/URL do Supabase pode ter vazado para os dados
+    blob = json.dumps(usuarios) + json.dumps(triagens_por_usuario)
     for var in ("SUPABASE_KEY", "SUPABASE_URL"):
         val = os.environ.get(var, "")
-        if val:
-            blob = json.dumps(usuarios) + json.dumps(triagens_por_usuario)
-            assert val not in blob, "%s apareceu nos dados gerados" % var
+        _exigir(not val or val not in blob, "%s apareceu nos dados gerados" % var)
 
 
 def conectar():
@@ -147,7 +161,8 @@ def conectar():
 def carregar(sb, usuarios, triagens_por_usuario):
     from werkzeug.security import generate_password_hash
 
-    senha_hash = generate_password_hash(SENHA_TESTE)
+    # senha vem do .env (MASSA_SENHA) ou é aleatória a cada execução; nunca fica no código nem no log
+    senha_hash = generate_password_hash(os.environ.get("MASSA_SENHA") or secrets.token_urlsafe(24))
     total = len(usuarios)
     ok_u = ok_t = dup = falhas = 0
     for i, (u, triagens) in enumerate(zip(usuarios, triagens_por_usuario), start=1):

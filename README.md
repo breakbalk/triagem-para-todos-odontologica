@@ -228,6 +228,13 @@ Estrutura de validação e testes para a disciplina de QA do ecossistema COE Dig
 - **`/tests/api`**: Coleções do Postman para medição de tempo de resposta ($\le 2,0\text{s}$) e regras RLS do Supabase.
 - **`/tests/e2e`**: Auditorias de usabilidade, responsividade e acessibilidade via Google Lighthouse.
 - **`/tests/fixtures`**: Massa de dados sintéticos e fictícios para execução dos testes operacionais (T01 a T07).
+- **`/tests/test_gerar_massa.py`**: Testes offline do gerador de massa sintética (`scripts/gerar_massa.py`).
+
+### Massa sintética (LGPD)
+
+`python scripts/gerar_massa.py` gera pacientes e triagens fictícios no Supabase (e-mails `sintetico.NNNN@example.com`, telefone com DDD `00`, sem CPF). A senha das contas vem de `MASSA_SENHA` no `.env` ou é aleatória a cada execução.
+
+> **Atenção:** a massa sintética deve ser apagada com `python scripts/gerar_massa.py --limpar` **antes de qualquer uso do banco pela clínica**. O comando remove apenas os registros marcados como sintéticos.
 
 ---
 
