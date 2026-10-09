@@ -99,8 +99,9 @@ def buscar_usuario_por_id(user_id):
     return dados["users"].get(uid)
 
 
-def criar_usuario(nome, email, password_hash, telefone=""):
+def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
     email = email.strip().lower()
+    cpf_limpo = (cpf or "").strip()
     if email in dados["users_by_email"]:
         raise ValueError("E-mail já cadastrado.")
 
@@ -111,6 +112,7 @@ def criar_usuario(nome, email, password_hash, telefone=""):
         "email": email,
         "password_hash": password_hash,
         "telefone": (telefone or "").strip(),
+        "cpf": cpf_limpo,
         "is_admin": False,
     }
     dados["users"][uid] = registro

@@ -228,6 +228,7 @@ function iniciarCadastro() {
       email: email,
       senha: senha,
       telefone: telefone,
+      cpf: cpf,
     });
 
     if (botao) botao.disabled = false;

@@ -135,9 +135,10 @@ def buscar_usuario_por_id(user_id):
     return _row_user(r.data[0])
 
 
-def criar_usuario(nome, email, password_hash, telefone=""):
+def criar_usuario(nome, email, password_hash, telefone="", cpf=""):
     email = email.strip().lower()
     tel = (telefone or "").strip() or None
+    cpf_limpo = (cpf or "").strip() or None
     try:
         ins = (
             _sb()
@@ -148,6 +149,7 @@ def criar_usuario(nome, email, password_hash, telefone=""):
                     "email": email,
                     "senha": password_hash,
                     "telefone": tel,
+                    "cpf": cpf_limpo,
                 }
             )
             .execute()
@@ -155,10 +157,10 @@ def criar_usuario(nome, email, password_hash, telefone=""):
     except Exception as e:
         msg = str(e).lower()
         if "duplicate" in msg or "unique" in msg or "23505" in msg:
-            raise ValueError("E-mail já cadastrado.") from e
+            raise ValueError("E-mail ou CPF já cadastrado.") from e
         raise
     if not ins.data:
-        raise ValueError("E-mail já cadastrado.")
+        raise ValueError("E-mail ou CPF já cadastrado.")
     return _row_user(ins.data[0])
 
 
