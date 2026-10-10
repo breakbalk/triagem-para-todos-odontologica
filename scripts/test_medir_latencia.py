@@ -57,28 +57,36 @@ class EstatisticaTest(unittest.TestCase):
 class CriterioTest(unittest.TestCase):
     def test_aprova_media_ate_2s(self):
         resumo = m.resumir([amostra(m.SALVAR, 2.0), amostra(m.FILA, 1.0), amostra(m.FILA, 3.0)])
-        self.assertTrue(m.aprovado(resumo))
+        self.assertTrue(m.atende_tempo(resumo))
 
     def test_reprova_media_acima_de_2s(self):
         resumo = m.resumir([amostra(m.SALVAR, 0.5), amostra(m.FILA, 2.5)])
-        self.assertFalse(m.aprovado(resumo))
+        self.assertFalse(m.atende_tempo(resumo))
 
-    def test_reprova_com_erro(self):
-        resumo = m.resumir([amostra(m.SALVAR, 0.5), amostra(m.FILA, 0.5), amostra(m.FILA, 0.5, status=403)])
-        self.assertFalse(m.aprovado(resumo))
+    def test_erro_conta_a_parte_do_tempo(self):
+        resumo = m.resumir([amostra(m.SALVAR, 0.5), amostra(m.FILA, 0.5), amostra(m.FILA, 0.5, status=500)])
+        self.assertTrue(m.atende_tempo(resumo))
+        self.assertEqual(m.contar_erros(resumo), (1, 3))
+        md = m.relatorio_markdown(resumo, {"data": "", "base_url": "", "rodadas": 1, "usuarios": 1, "lote": 1})
+        self.assertIn("**Erros: 1 de 3 pedidos** (status diferente de 200", md)
+
+    def test_so_erro_reprova(self):
+        resumo = m.resumir([amostra(m.SALVAR, 0.5), amostra(m.FILA, 0.5, status=500)])
+        self.assertFalse(m.atende_tempo(resumo))
 
     def test_minhas_nao_entra_no_criterio(self):
         resumo = m.resumir([amostra(m.SALVAR, 0.5), amostra(m.FILA, 0.5), amostra(m.MINHAS, 5.0)])
-        self.assertTrue(m.aprovado(resumo))
+        self.assertTrue(m.atende_tempo(resumo))
 
     def test_sem_amostra_reprova(self):
-        self.assertFalse(m.aprovado([]))
+        self.assertFalse(m.atende_tempo([]))
 
     def test_relatorio_mostra_resultado(self):
         resumo = m.resumir([amostra(m.SALVAR, 0.25), amostra(m.FILA, 0.5)])
         info = {"data": "01/01/2026 10:00", "base_url": "http://x", "rodadas": 1, "usuarios": 1, "lote": 1, "fila": 7}
         md = m.relatorio_markdown(resumo, info)
-        self.assertIn("**Resultado: APROVADO**", md)
+        self.assertIn("**Critério do card (tempo médio <= 2,0 s): ATENDIDO**", md)
+        self.assertIn("**Erros: 0 de 2 pedidos**", md)
         self.assertIn("| uso normal | `POST /api/triagem` | 1 | 0 | 250 ms |", md)
         self.assertIn("7 triagens", md)
 
@@ -126,12 +134,30 @@ class MedicaoContraBackendLocalTest(unittest.TestCase):
         self.assertEqual(codigo, 0, md)
         apagar.assert_called_once()  # limpa no fim
         self.assertEqual([a.rsplit(".", 1)[1] for a in arquivos], ["csv", "md"])
-        self.assertIn("**Resultado: APROVADO**", md)
+        self.assertIn("**Critério do card (tempo médio <= 2,0 s): ATENDIDO**", md)
+        self.assertIn("**Erros: 0 de 33 pedidos**", md)
         # 3 rodadas + 4 usuários x 2 = 11 triagens salvas, todas na fila
         self.assertIn("| uso normal | `POST /api/triagem` | 3 | 0 |", md)
         self.assertIn("| concorrência | `GET /api/triagem/admin/todas` | 8 | 0 |", md)
         triagens = [t for t in self.storage.dados["triagens"] if "LATENCIA" in t.get("sintomas", "")]
         self.assertEqual(len(triagens), 11)
+
+
+class LoginFalhaNaoTravaTest(unittest.TestCase):
+    """Login que falha na fase 2 encerra a medição em vez de deixar os outros presos na largada."""
+
+    def test_login_com_erro_aborta_sem_travar(self):
+        chamadas = {"n": 0}
+
+        def entrar(_self, _email, _senha):
+            chamadas["n"] += 1
+            if chamadas["n"] == 3:  # 1º = fase 1; o 3º é um cliente da fase 2
+                raise RuntimeError("login falhou (500)")
+
+        with patch.object(m.Cliente, "entrar", entrar), \
+                patch.object(m.Cliente, "chamar", return_value=(200, 0.01, None)):
+            with self.assertRaisesRegex(RuntimeError, "login falhou"):
+                m.medir("http://127.0.0.1:9", "x", rodadas=1, usuarios=4, lote=1)
 
 
 if __name__ == "__main__":

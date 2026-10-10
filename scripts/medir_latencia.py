@@ -157,12 +157,15 @@ def resumir(amostras):
     return resumo
 
 
-def aprovado(resumo):
-    """Critério do card: média <= 2,0 s, sem erro, para salvar triagem e consultar a fila."""
+def atende_tempo(resumo):
+    """Critério do card: tempo médio <= 2,0 s para salvar triagem e consultar a fila."""
     cobrados = [r for r in resumo if r["endpoint"] in CRITERIO]
-    return bool(cobrados) and all(
-        r["erros"] == 0 and r["media"] is not None and r["media"] <= LIMITE_S for r in cobrados
-    )
+    return bool(cobrados) and all(r["media"] is not None and r["media"] <= LIMITE_S for r in cobrados)
+
+
+def contar_erros(resumo):
+    """(pedidos com status diferente de 200, total de pedidos) — fica à parte do critério de tempo."""
+    return sum(r["erros"] for r in resumo), sum(r["n"] for r in resumo)
 
 
 def _ms(s):
@@ -192,7 +195,15 @@ def relatorio_markdown(resumo, info):
             % (r["fase"], r["endpoint"], r["n"], r["erros"], _ms(r["media"]), _ms(r["mediana"]),
                _ms(r["p95"]), _ms(r["max"]), pct)
         )
-    linhas += ["", "**Resultado: %s**" % ("APROVADO" if aprovado(resumo) else "REPROVADO"), ""]
+    erros, total = contar_erros(resumo)
+    linhas += [
+        "",
+        "**Critério do card (tempo médio <= 2,0 s): %s**" % ("ATENDIDO" if atende_tempo(resumo) else "NÃO ATENDIDO"),
+        "",
+        "**Erros: %d de %d pedidos**%s"
+        % (erros, total, "" if erros == 0 else " (status diferente de 200; veja o log do backend)"),
+        "",
+    ]
     return "\n".join(linhas)
 
 
@@ -216,20 +227,28 @@ def medir(base_url, senha, rodadas, usuarios, lote):
             status, s, n_fila = c.chamar(ep)
             anotar("uso normal", ep, status, s, n_fila)
 
-    # Fase 2 — concorrência moderada: todos começam juntos
-    largada = threading.Barrier(usuarios)
-
-    def trabalhador(_):
+    # Fase 2 — concorrência moderada: todos começam juntos.
+    # O login não é medido: cada cliente entra antes, um por vez, para que uma
+    # falha de login não deixe os outros presos na largada.
+    clientes = []
+    for _ in range(usuarios):
         cli = Cliente(base_url)
         cli.entrar(EMAIL_TESTE, senha)
-        largada.wait()
+        clientes.append(cli)
+    largada = threading.Barrier(usuarios)
+
+    def trabalhador(cli):
+        try:
+            largada.wait(timeout=60)
+        except threading.BrokenBarrierError:
+            pass
         for _ in range(lote):
             for ep in ENDPOINTS:
                 status, s, n_fila = cli.chamar(ep)
                 anotar("concorrência", ep, status, s, n_fila)
 
     with ThreadPoolExecutor(max_workers=usuarios) as pool:
-        list(pool.map(trabalhador, range(usuarios)))
+        list(pool.map(trabalhador, clientes))
     return amostras, fila["n"]
 
 
@@ -318,7 +337,7 @@ def main(argv=None):
     md, bruto = salvar(amostras, resumo, info, args.saida)
     print(relatorio_markdown(resumo, info))
     print("[LATENCIA] Relatório: %s\n[LATENCIA] Dados brutos: %s" % (md, bruto))
-    return 0 if aprovado(resumo) else 1
+    return 0 if atende_tempo(resumo) and contar_erros(resumo)[0] == 0 else 1
 
 
 if __name__ == "__main__":
