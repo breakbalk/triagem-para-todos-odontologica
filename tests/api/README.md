@@ -41,7 +41,8 @@ Ele roda em duas fases:
 - **Concorrência moderada:** 10 usuários ao mesmo tempo (`--usuarios`), cada um com
   sessão própria, fazendo 5 pedidos de cada endpoint (`--lote`).
 
-O resultado tem média, mediana, p95, máximo e o veredito (APROVADO ou REPROVADO).
+O resultado tem média, mediana, p95 e máximo, diz se o critério de tempo foi
+atendido e conta, à parte, os pedidos que deram erro.
 Ele sai em `docs/Evidencias/EVIDENCIA CARD 2.2/`, como `.md` (tabela) e `.csv`
 (cada pedido).
 
