@@ -1389,3 +1389,18 @@ body.bg-app[data-page="confirmacao"] {
     justify-content: center;
     padding: 10px 16px;
 }
+
+/* Correção definitiva de visibilidade do botão Sair */
+.app-nav .btn-nav.btn-logout,
+.btn-nav.btn-logout {
+    background-color: #353375 !important;
+    color: #F4E7BB !important;
+    border: 2px solid #353375 !important;
+    opacity: 1 !important;
+}
+
+.app-nav .btn-nav.btn-logout:hover,
+.btn-nav.btn-logout:hover {
+    background-color: #43408a !important;
+    border-color: #43408a !important;
+}
