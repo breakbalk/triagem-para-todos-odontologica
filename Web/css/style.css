@@ -352,6 +352,7 @@ body.bg-app {
     margin: 12px 0 16px;
     text-align: center;
     box-shadow: 0 8px 24px rgba(53, 51, 117, 0.35);
+    min-height: 110px; /* Adicionado para reservar espaço e evitar CLS */
 }
 
 .resumo-destaque-rn15 .resumo-label {
@@ -382,6 +383,7 @@ body.bg-app {
     margin: 12px 0 20px;
     text-align: left;
     line-height: 1.6;
+    min-height: 280px; /* Adicionado para reservar espaço e evitar CLS */
 }
 
 .resumo-box p {
@@ -394,7 +396,6 @@ body.bg-app {
     color: #555;
     font-style: italic;
 }
-
 .card-panel > .instrucao {
     color: #555;
     margin-bottom: 12px;

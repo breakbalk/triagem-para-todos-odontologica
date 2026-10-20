@@ -11,3 +11,6 @@
     background-color: #43408a !important;
     border-color: #43408a !important;
 }
+.resumo-destaque-rn15{background:linear-gradient(135deg,#353375 0%,#4a4588 100%);color:#f4e7bb;border-radius:14px;padding:20px;margin:12px 0 16px;text-align:center;box-shadow:0 8px 24px rgba(53,51,117,0.35);min-height:110px;}
+
+.resumo-box{background:#f4f6ff;border-radius:12px;padding:16px;margin:12px 0 20px;text-align:left;line-height:1.6;min-height:280px;}
