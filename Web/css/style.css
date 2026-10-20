@@ -1405,3 +1405,11 @@ body.bg-app[data-page="confirmacao"] {
     background-color: #43408a !important;
     border-color: #43408a !important;
 }
+
+/* Correção de largura para mensagens de erro no layout desktop */
+@media (min-width: 768px) {
+    .form-stack .msg-error,
+    .form-stack .form-msg {
+        grid-column: span 2;
+    }
+}
