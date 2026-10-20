@@ -102,11 +102,11 @@ input:focus {
 /* --- BOTÃO PERSONALIZADO (LOGIN E CADASTRO) --- */
 .btn-primary {
     width: 100%;
-    padding: 16px;
+    padding: 16px 20px;
+    min-height: 48px;            /* Garante o tamanho tátil mínimo exigido (>= 48px) */
     margin-top: 10px;
     
-    /* Cores iniciais solicitadas */
-    background-color: var(--primary-color);
+    background-color: #353375;   /* Azul UniEVANGÉLICA com excelente contraste */
     color: #F4E7BB;             /* Cor da letra creme */
     border: 2px solid #F4E7BB;  /* Borda na cor creme */
     
@@ -241,8 +241,11 @@ body.bg-app {
 }
 
 .btn-nav {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px 14px;
+    min-height: 48px; /* Adicionado para garantir a ergonomia tátil >= 48px */
     border-radius: 10px;
     background: var(--primary-color);
     color: #f4e7bb !important;
@@ -349,6 +352,7 @@ body.bg-app {
     margin: 12px 0 16px;
     text-align: center;
     box-shadow: 0 8px 24px rgba(53, 51, 117, 0.35);
+    min-height: 110px; /* Adicionado para reservar espaço e evitar CLS */
 }
 
 .resumo-destaque-rn15 .resumo-label {
@@ -379,6 +383,7 @@ body.bg-app {
     margin: 12px 0 20px;
     text-align: left;
     line-height: 1.6;
+    min-height: 280px; /* Adicionado para reservar espaço e evitar CLS */
 }
 
 .resumo-box p {
@@ -391,7 +396,6 @@ body.bg-app {
     color: #555;
     font-style: italic;
 }
-
 .card-panel > .instrucao {
     color: #555;
     margin-bottom: 12px;
@@ -1376,5 +1380,36 @@ body.bg-app[data-page="confirmacao"] {
     .lista-documentos-modal li {
         font-size: 1.05rem; /* Melhora a leitura dos itens em telas grandes */
         padding: 15px;
+    }
+}
+
+.btn-panel, .btn-exit {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+}
+
+/* Correção definitiva de visibilidade do botão Sair */
+.app-nav .btn-nav.btn-logout,
+.btn-nav.btn-logout {
+    background-color: #353375 !important;
+    color: #F4E7BB !important;
+    border: 2px solid #353375 !important;
+    opacity: 1 !important;
+}
+
+.app-nav .btn-nav.btn-logout:hover,
+.btn-nav.btn-logout:hover {
+    background-color: #43408a !important;
+    border-color: #43408a !important;
+}
+
+/* Correção de largura para mensagens de erro no layout desktop */
+@media (min-width: 768px) {
+    .form-stack .msg-error,
+    .form-stack .form-msg {
+        grid-column: span 2;
     }
 }
