@@ -102,11 +102,11 @@ input:focus {
 /* --- BOTÃO PERSONALIZADO (LOGIN E CADASTRO) --- */
 .btn-primary {
     width: 100%;
-    padding: 16px;
+    padding: 16px 20px;
+    min-height: 48px;            /* Garante o tamanho tátil mínimo exigido (>= 48px) */
     margin-top: 10px;
     
-    /* Cores iniciais solicitadas */
-    background-color: var(--primary-color);
+    background-color: #353375;   /* Azul UniEVANGÉLICA com excelente contraste */
     color: #F4E7BB;             /* Cor da letra creme */
     border: 2px solid #F4E7BB;  /* Borda na cor creme */
     
@@ -241,8 +241,11 @@ body.bg-app {
 }
 
 .btn-nav {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px 14px;
+    min-height: 48px; /* Adicionado para garantir a ergonomia tátil >= 48px */
     border-radius: 10px;
     background: var(--primary-color);
     color: #f4e7bb !important;
@@ -1377,4 +1380,12 @@ body.bg-app[data-page="confirmacao"] {
         font-size: 1.05rem; /* Melhora a leitura dos itens em telas grandes */
         padding: 15px;
     }
+}
+
+.btn-panel, .btn-exit {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
 }
