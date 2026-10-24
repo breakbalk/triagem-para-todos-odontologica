@@ -45,6 +45,9 @@ def registrar(nome, esperado, obtido, detalhe=""):
 
 
 def resumo_corpo(r):
+    # Resposta de sucesso pode conter dados reais (se o RLS falhar): nunca grava o conteúdo, só o tamanho.
+    if r.status_code < 300:
+        return "corpo omitido (%d bytes)" % len(r.content)
     t = (r.text or "").strip().replace("\n", " ")
     return t[:110]
 
