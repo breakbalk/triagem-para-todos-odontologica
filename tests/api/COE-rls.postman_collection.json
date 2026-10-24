@@ -1,0 +1,456 @@
+{
+  "info": {
+    "name": "COE - RLS (Card 2.1)",
+    "description": "Valida o bloqueio de anon e de usuario comum. Todos os PATCH/DELETE usam um UUID zerado: nenhuma linha real e afetada. Variaveis: supabaseUrl, anonKey (publishable), backendUrl; opcionais userJwt, userId, tokenPaciente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "A. anon (sem login) na API do Supabase",
+      "item": [
+        {
+          "name": "1. anon: listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/usuarios?select=id_usuario,email&limit=1"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. anon: listar a fila geral (triagens)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens?select=id_triagem&limit=1"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. anon: listar mobile_token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/mobile_token?select=token&limit=1"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. anon: listar password_reset",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/password_reset?select=email&limit=1"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. anon: criar triagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"usuario_id\": \"00000000-0000-0000-0000-000000000000\", \"servico\": \"protese\", \"periodo\": \"noturno\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. anon: editar triagem (filtro que não casa com nada)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens?id_triagem=eq.00000000-0000-0000-0000-000000000000"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"servico\": \"x\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. anon: apagar triagem (filtro que não casa com nada)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens?id_triagem=eq.00000000-0000-0000-0000-000000000000"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "B. usuario comum (JWT) - opcional",
+      "item": [
+        {
+          "name": "8. usuário comum: listar triagens de outros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userJwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens?select=id_triagem&usuario_id=neq.{{userId}}"
+            },
+            "description": "Só rode se tiver um JWT do Supabase Auth em userJwt. Esperado: 200 com [] (RLS filtra) ou 401/403."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200/401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([200, 401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. usuário comum: apagar triagem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userJwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/triagens?id_triagem=eq.00000000-0000-0000-0000-000000000000"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. usuário comum: ler a coluna senha",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userJwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{supabaseUrl}}/rest/v1/usuarios?select=senha&limit=1"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401/403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401, 403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "C. Flask (401/403)",
+      "item": [
+        {
+          "name": "11. Flask sem login: fila administrativa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{backendUrl}}/api/triagem/admin/todas"
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Flask sem login: atualizar status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{backendUrl}}/api/triagem/admin/atualizar-status"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"protocolo\": \"X\", \"status\": \"Finalizado\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([401]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Flask paciente comum: fila administrativa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPaciente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{backendUrl}}/api/triagem/admin/todas"
+            },
+            "description": "tokenPaciente = mobile_token de um paciente comum (login em /api/auth/login)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403 (bloqueado)', function () { pm.expect(pm.response.code).to.be.oneOf([403]); });",
+                  "pm.test('nenhuma linha vazou', function () { var t = pm.response.text(); pm.expect(t).to.not.include('@'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "supabaseUrl",
+      "value": "https://SEU_PROJECT_REF.supabase.co"
+    },
+    {
+      "key": "anonKey",
+      "value": ""
+    },
+    {
+      "key": "backendUrl",
+      "value": "http://127.0.0.1:5000"
+    },
+    {
+      "key": "userJwt",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "tokenPaciente",
+      "value": ""
+    }
+  ]
+}
