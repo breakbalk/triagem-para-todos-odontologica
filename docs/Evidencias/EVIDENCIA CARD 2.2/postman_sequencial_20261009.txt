@@ -1,0 +1,244 @@
+newman
+
+COE - Latência (Card 2.2)
+
+Iteration 1/10
+
+□ Medição
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 548ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 262ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 528B, 111ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 77.35kB, 252ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 2/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 387ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 264ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 851B, 95ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 77.72kB, 238ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 3/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 385ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 240ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 1.17kB, 139ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 78.09kB, 285ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 4/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 380ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 271ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 1.5kB, 103ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 78.46kB, 273ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 5/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 377ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 210ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 1.82kB, 100ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 78.84kB, 269ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 6/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 454ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 221ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 2.14kB, 179ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 79.21kB, 221ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 7/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 351ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 205ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 2.47kB, 108ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 79.58kB, 233ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 8/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 394ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 207ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 2.79kB, 104ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 79.95kB, 274ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 9/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 368ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 205ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 3.11kB, 125ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 80.32kB, 232ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+Iteration 10/10
+
+└ 1. Login
+  POST http://127.0.0.1:5000/api/auth/login [200 OK, 681B, 434ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 2. Salvar triagem (POST /api/triagem)
+  POST http://127.0.0.1:5000/api/triagem [200 OK, 525B, 195ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 3. Minhas triagens (GET /api/triagem/minhas)
+  GET http://127.0.0.1:5000/api/triagem/minhas [200 OK, 3.44kB, 125ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+└ 4. Fila da recepção (GET /api/triagem/admin/todas)
+  GET http://127.0.0.1:5000/api/triagem/admin/todas [200 OK, 80.7kB, 241ms]
+  √  status 200
+  √  respondeu em até 2,0 s
+
+┌─────────────────────────┬────────────────────┬────────────────────┐
+│                         │           executed │             failed │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              iterations │                 10 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│                requests │                 40 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│            test-scripts │                 50 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│      prerequest-scripts │                  0 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              assertions │                 80 │                  0 │
+├─────────────────────────┴────────────────────┴────────────────────┤
+│ total run duration: 13.4s                                         │
+├───────────────────────────────────────────────────────────────────┤
+│ total data received: 812.72kB (approx)                            │
+├───────────────────────────────────────────────────────────────────┤
+│ average response time: 251ms [min: 95ms, max: 548ms, s.d.: 108ms] │
+└───────────────────────────────────────────────────────────────────┘

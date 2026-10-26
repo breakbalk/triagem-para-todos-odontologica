@@ -1,0 +1,129 @@
+{
+  "info": {
+    "name": "COE - Latência (Card 2.2)",
+    "description": "Card 2.2 [T05/MQ05]. Mede o tempo de resposta de salvar triagem e consultar a fila. Critério de aceite: média <= 2,0 s.\n\nComo usar: veja tests/api/README.md. Rode '0. Cadastrar' uma vez; depois rode a pasta 'Medição' no Collection Runner (Iterations = 30) ou na aba Performance (usuários virtuais). No fim, apague o usuário de teste com: python scripts/medir_latencia.py --limpar",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:5000" },
+    { "key": "email", "value": "sintetico.latencia@example.com" },
+    { "key": "senha", "value": "" },
+    { "key": "token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+          "pm.test('respondeu em até 2,0 s', function () { pm.expect(pm.response.responseTime).to.be.at.most(2000); });"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Cadastrar usuário de teste (uma vez)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// senha aleatória, guardada só nas variáveis da coleção",
+              "if (!pm.collectionVariables.get('senha')) {",
+              "  pm.collectionVariables.set('senha', 'Lat@' + Math.random().toString(36).slice(2, 12));",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.json();",
+              "if (body.mobile_token) { pm.collectionVariables.set('token', body.mobile_token); }",
+              "pm.test('tem acesso à fila (COE_SECRETARIA_EMAILS)', function () {",
+              "  pm.expect(['admin', 'secretaria']).to.include(body.user.nivel_acesso);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Paciente Sintetico Latencia\",\n  \"email\": \"{{email}}\",\n  \"senha\": \"{{senha}}\",\n  \"telefone\": \"(00) 90000-0000\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Medição",
+      "item": [
+        {
+          "name": "1. Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.mobile_token) { pm.collectionVariables.set('token', body.mobile_token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"senha\": \"{{senha}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2. Salvar triagem (POST /api/triagem)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/triagem",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Paciente Sintetico Latencia\",\n  \"telefone\": \"(00) 90000-0000\",\n  \"servico\": \"tratamento_geral\",\n  \"periodo\": \"matutino\",\n  \"sintomas\": \"LATENCIA - teste de desempenho (Card 2.2)\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3. Minhas triagens (GET /api/triagem/minhas)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/triagem/minhas"
+          }
+        },
+        {
+          "name": "4. Fila da recepção (GET /api/triagem/admin/todas)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/triagem/admin/todas"
+          }
+        }
+      ]
+    }
+  ]
+}
