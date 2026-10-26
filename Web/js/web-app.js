@@ -631,7 +631,7 @@ function formatarStatus(status, protocolo) {
     const opcoes = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"];
     var protoAttr = String(protocolo || "").replace(/'/g, "\\'");
 
-    let html = `<select class="status-select" onchange="atualizarStatusBanco('${protoAttr}', this.value)">`;
+let html = `<select class="status-select" aria-label="Alterar status da triagem ${escapeHtml(protocolo)}" onchange="atualizarStatusBanco('${protoAttr}', this.value)">`;
     
     opcoes.forEach(opcao => {
         const selected = status === opcao ? "selected" : "";
