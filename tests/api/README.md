@@ -69,6 +69,10 @@ Se a execução cair no meio, rode `python scripts/medir_latencia.py --limpar`.
    a média, o p90 e os erros.
 5. No fim, apague o usuário de teste com `python scripts/medir_latencia.py --limpar`.
 
+> **Atenção:** a coleção do Postman não tem passo de limpeza. Sem o passo 5, o usuário
+> de teste e as triagens dele ficam no banco. Confira depois com a contagem de antes
+> (usuários e triagens) e remova o que sobrar.
+
 Cada pedido testa se o status é 200 e se respondeu em até 2,0 s.
 
 ## Testes do script (offline)
