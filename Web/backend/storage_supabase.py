@@ -14,15 +14,25 @@ Admin: não há coluna is_admin; quem coincide com COE_ADMIN_EMAIL é tratado co
 import json
 import os
 import random
+import threading
+import time
 import uuid
 from datetime import datetime
 
-_sb_client = None
+import httpx
+
+_local = threading.local()
+
+# Erro de rede em que a conexão HTTP/2 reaproveitada já tinha sido fechada pelo servidor.
+_ERROS_REDE = (httpx.RemoteProtocolError,)
+_TENTATIVAS = 3
+_ESPERA_S = 0.05
 
 
 def _sb():
-    global _sb_client
-    if _sb_client is None:
+    """Cliente Supabase da thread atual: cada thread do Flask tem o seu (sem compartilhar a conexão HTTP/2)."""
+    cli = getattr(_local, "cliente", None)
+    if cli is None:
         from supabase import create_client
 
         url = os.environ.get("SUPABASE_URL", "").strip()
@@ -31,8 +41,57 @@ def _sb():
             raise RuntimeError(
                 "COE_STORAGE=supabase exige SUPABASE_URL e SUPABASE_KEY no Web/backend/.env — veja .env.example."
             )
-        _sb_client = create_client(url, key)
-    return _sb_client
+        cli = _local.cliente = create_client(url, key)
+    return cli
+
+
+def _descartar_cliente():
+    _local.cliente = None
+
+
+def _com_retry(executar, tentativas=_TENTATIVAS):
+    """Repete a chamada se a conexão foi derrubada (httpx.RemoteProtocolError), com um cliente novo a cada vez."""
+    for i in range(tentativas):
+        try:
+            return executar()
+        except _ERROS_REDE:
+            if i == tentativas - 1:
+                raise
+            _descartar_cliente()
+            time.sleep(_ESPERA_S * (i + 1))
+
+
+class _Consulta:
+    """Encapsula a cadeia table().select()...: o execute() repete em erro de conexão.
+
+    INSERT não repete sozinho (repetir pode duplicar a linha); use execute_com_retry() quando o insert for idempotente.
+    """
+
+    def __init__(self, nome, passos=()):
+        self._nome = nome
+        self._passos = passos
+        self._insert = any(n == "insert" for n, _, _ in passos)
+
+    def _montar(self):
+        q = _sb().table(self._nome)
+        for n, a, k in self._passos:
+            q = getattr(q, n)(*a, **k)
+        return q
+
+    def __getattr__(self, n):
+        if n.startswith("_"):
+            raise AttributeError(n)
+        return lambda *a, **k: _Consulta(self._nome, self._passos + ((n, a, k),))
+
+    def execute(self):
+        return _com_retry(lambda: self._montar().execute(), 1 if self._insert else _TENTATIVAS)
+
+    def execute_com_retry(self):
+        return _com_retry(lambda: self._montar().execute())
+
+
+def _tabela(nome):
+    return _Consulta(nome)
 
 
 def _admin_email_padrao():
@@ -97,7 +156,7 @@ def _row_triagem(row):
 def _criar_admin_padrao():
     from werkzeug.security import generate_password_hash
 
-    r = _sb().table("usuarios").select("id_usuario").limit(1).execute()
+    r = _tabela("usuarios").select("id_usuario").limit(1).execute()
     if r.data and len(r.data) > 0:
         return
 
@@ -105,7 +164,7 @@ def _criar_admin_padrao():
     senha = os.environ.get("COE_ADMIN_PASSWORD", "Admin@coe2026")
     h = generate_password_hash(senha)
     tel = ""
-    _sb().table("usuarios").insert(
+    _tabela("usuarios").insert(
         {
             "nome": "Administrador COE",
             "email": email,
@@ -122,7 +181,7 @@ def init_storage():
 
 def buscar_usuario_por_email(email):
     email = email.strip().lower()
-    r = _sb().table("usuarios").select("*").eq("email", email).limit(1).execute()
+    r = _tabela("usuarios").select("*").eq("email", email).limit(1).execute()
     if not r.data:
         return None
     return _row_user(r.data[0])
@@ -130,7 +189,7 @@ def buscar_usuario_por_email(email):
 
 def buscar_usuario_por_id(user_id):
     uid = str(user_id).strip()
-    r = _sb().table("usuarios").select("*").eq("id_usuario", uid).limit(1).execute()
+    r = _tabela("usuarios").select("*").eq("id_usuario", uid).limit(1).execute()
     if not r.data:
         return None
     return _row_user(r.data[0])
@@ -142,8 +201,7 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     cpf_limpo = (cpf or "").strip() or None
     try:
         ins = (
-            _sb()
-            .table("usuarios")
+            _tabela("usuarios")
             .insert(
                 {
                     "nome": nome.strip(),
@@ -170,8 +228,7 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
 def atualizar_senha_por_email(email, password_hash):
     email = email.strip().lower()
     r = (
-        _sb()
-        .table("usuarios")
+        _tabela("usuarios")
         .update({"senha": password_hash})
         .eq("email", email)
         .execute()
@@ -202,8 +259,7 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         extra["protocolo"] = _protocolo_para(id_t, ano_proto)
         try:
             ins = (
-                _sb()
-                .table("triagens")
+                _tabela("triagens")
                 .insert(
                     {
                         "id_triagem": id_t,
@@ -255,8 +311,7 @@ def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
 def listar_triagens_do_usuario(user_id):
     uid = str(user_id).strip()
     r = (
-        _sb()
-        .table("triagens")
+        _tabela("triagens")
         .select("*")
         .eq("usuario_id", uid)
         .order("id_triagem", desc=True)
@@ -266,7 +321,7 @@ def listar_triagens_do_usuario(user_id):
 
 
 def listar_todas_triagens():
-    r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
+    r = _tabela("triagens").select("*").order("id_triagem", desc=True).execute()
     return [_row_triagem(row) for row in (r.data or [])]
 
 
@@ -274,13 +329,13 @@ def atualizar_status_triagem(protocolo, novo_status):
     protocolo = (protocolo or "").strip()
     if not protocolo:
         return False
-    r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
+    r = _tabela("triagens").select("*").order("id_triagem", desc=True).execute()
     for row in (r.data or []):
         ex = _extras_solicitacao(row.get("solicitacao_dados"))
         if str(ex.get("protocolo", "")).strip() != protocolo:
             continue
         ex["status"] = (novo_status or "").strip() or "Pendente"
-        _sb().table("triagens").update({"solicitacao_dados": json.dumps(ex)}).eq("id_triagem", row["id_triagem"]).execute()
+        _tabela("triagens").update({"solicitacao_dados": json.dumps(ex)}).eq("id_triagem", row["id_triagem"]).execute()
         return True
     return False
 
@@ -288,14 +343,14 @@ def atualizar_status_triagem(protocolo, novo_status):
 def salvar_token_reset(email):
     email = email.strip().lower()
     token = str(random.randint(10000000, 99999999))
-    _sb().table("password_reset").delete().eq("email", email).execute()
-    _sb().table("password_reset").insert({"email": email, "token": token}).execute()
+    _tabela("password_reset").delete().eq("email", email).execute()
+    _tabela("password_reset").insert({"email": email, "token": token}).execute()
     return token
 
 
 def pegar_token_reset(email):
     email = email.strip().lower()
-    r = _sb().table("password_reset").select("token").eq("email", email).limit(1).execute()
+    r = _tabela("password_reset").select("token").eq("email", email).limit(1).execute()
     if not r.data:
         return None
     return r.data[0]["token"]
@@ -303,20 +358,20 @@ def pegar_token_reset(email):
 
 def limpar_token_reset(email):
     email = email.strip().lower()
-    _sb().table("password_reset").delete().eq("email", email).execute()
+    _tabela("password_reset").delete().eq("email", email).execute()
 
 
 def criar_token_mobile(user_id):
     token = str(random.randint(10**15, 10**16 - 1))
     uid = str(user_id).strip()
-    _sb().table("mobile_token").insert({"token": token, "usuario_id": uid}).execute()
+    _tabela("mobile_token").insert({"token": token, "usuario_id": uid}).execute()
     return token
 
 
 def user_id_do_token_mobile(token):
     if not token:
         return None
-    r = _sb().table("mobile_token").select("usuario_id").eq("token", token).limit(1).execute()
+    r = _tabela("mobile_token").select("usuario_id").eq("token", token).limit(1).execute()
     if not r.data:
         return None
     return str(r.data[0]["usuario_id"])
@@ -325,4 +380,4 @@ def user_id_do_token_mobile(token):
 def apagar_token_mobile(token):
     if not token:
         return
-    _sb().table("mobile_token").delete().eq("token", token).execute()
+    _tabela("mobile_token").delete().eq("token", token).execute()
