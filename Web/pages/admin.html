@@ -42,6 +42,16 @@
                 <tbody></tbody>
             </table>
         </div>
+
+        <!-- Controles de Paginação do Card 3.6 -->
+        <!-- Controles de Paginação padronizados com o botão Voltar -->
+        <!-- Controles de Paginação com a borda idêntica ao botão Voltar -->
+        <div id="paginacao-container" style="margin: 20px 0; text-align: center; display: flex; justify-content: center; gap: 15px; align-items: center;">
+            <button id="btn-anterior" class="btn-nav btn-ghost" onclick="mudarPagina(-1)" style="cursor: pointer; border: 1px solid #b0c4de; border-radius: 20px; padding: 6px 16px; background-color: #ffffff;">&laquo; Anterior</button>
+            <span id="info-pagina" style="font-weight: bold; color: #333; font-size: 14px;">Página 1 de 3</span>
+            <button id="btn-proxima" class="btn-nav btn-ghost" onclick="mudarPagina(1)" style="cursor: pointer; border: 1px solid #b0c4de; border-radius: 20px; padding: 6px 16px; background-color: #ffffff;">Próxima &raquo;</button>
+        </div>
+
     </main>
 
     <script src="/js/web-app.js" defer></script>

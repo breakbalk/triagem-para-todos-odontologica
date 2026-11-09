@@ -490,6 +490,11 @@ async function iniciarConfirmacao() {
 
 // --- ADMIN ---
 
+// Variáveis globais de controle da paginação (ficam fora da função)
+var paginaAtual = 1;
+var limitePorPagina = 10;
+var totalRegistrosGlobal = 0;
+
 async function iniciarAdmin() {
   var user = await precisaEstarLogado();
   if (!user) return;
@@ -503,7 +508,7 @@ async function iniciarAdmin() {
     return;
   }
 
-  var r = await getJSON("/api/triagem/admin/todas");
+  var r = await getJSON("/api/triagem/admin/todas?page=" + paginaAtual + "&limit=" + limitePorPagina);
   if (!r.okHttp) {
     mostrarErro(r.dados.error || "Erro.");
     return;
@@ -542,6 +547,13 @@ async function iniciarAdmin() {
       escapeHtml(dataStr) +
       "</td>";
     tbody.appendChild(tr);
+  }
+  totalRegistrosGlobal = r.dados.total || 0;
+  var totalPaginas = Math.ceil(totalRegistrosGlobal / limitePorPagina) || 1;
+  
+  var infoPagina = document.getElementById("info-pagina");
+  if (infoPagina) {
+      infoPagina.textContent = "Página " + paginaAtual + " de " + totalPaginas;
   }
 }
 
@@ -673,4 +685,16 @@ function mascaraCPF(input) {
     v = v.substring(0, 3) + "." + v.substring(3);
   }
   input.value = v;
+}
+
+function mudarPagina(direcao) {
+    var totalPaginas = Math.ceil(totalRegistrosGlobal / limitePorPagina) || 1;
+    var novaPagina = paginaAtual + direcao;
+
+    if (novaPagina < 1 || novaPagina > totalPaginas) {
+        return; // Não deixa avançar para além do limite
+    }
+
+    paginaAtual = novaPagina;
+    iniciarAdmin(); // Recarrega o painel com a nova página
 }
