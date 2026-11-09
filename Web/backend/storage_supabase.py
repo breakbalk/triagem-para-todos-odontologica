@@ -17,7 +17,7 @@ import random
 import threading
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import httpx
 
@@ -242,7 +242,46 @@ def _protocolo_para(id_triagem, ano):
     return "TRG-%s-%s" % (ano, str(id_triagem).replace("-", "")[:8])
 
 
+JANELA_REENVIO_S = 120
+
+
+def _resposta_triagem(row, extra):
+    ds = row.get("data_triagem")
+    return {
+        "id": str(row["id_triagem"]),
+        "user_id": str(row["usuario_id"]),
+        "nome": extra.get("nome", ""),
+        "telefone": extra.get("telefone", ""),
+        "servico": row["servico"],
+        "periodo": row["periodo"],
+        "sintomas": extra.get("sintomas", ""),
+        "status": extra.get("status", "Pendente"),
+        "data_solicitacao": ds.isoformat() if hasattr(ds, "isoformat") else str(ds or ""),
+        "protocolo": extra.get("protocolo", ""),
+    }
+
+
+def _triagem_identica_recente(uid, servico, periodo, extra, agora):
+    """Reenvio (queda de rede, duplo clique): mesma pessoa, mesmos dados, dentro da janela."""
+    desde = (agora - timedelta(seconds=JANELA_REENVIO_S)).isoformat()
+    r = (
+        _tabela("triagens")
+        .select("*")
+        .eq("usuario_id", uid)
+        .eq("servico", servico)
+        .eq("periodo", periodo)
+        .gte("data_triagem", desde)
+        .execute()
+    )
+    for row in r.data or []:
+        ex = _extras_solicitacao(row.get("solicitacao_dados"))
+        if all(ex.get(k) == extra[k] for k in ("nome", "telefone", "sintomas")):
+            return _resposta_triagem(row, ex)
+    return None
+
+
 def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+    """Grava a triagem com UM insert: o UUID e o protocolo (TRG-ano-xxxxxxxx) nascem no app, sem __TEMP__ nem update."""
     uid_str = str(user_id).strip()
     extra = {
         "nome": nome.strip(),
@@ -250,57 +289,38 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         "sintomas": (sintomas or "").strip(),
         "status": "Pendente",
     }
-    ano_proto = datetime.now().year
-    ins = None
-    # A coluna protocolo é NOT NULL + UNIQUE (Card 3.6): o UUID e o protocolo são gerados
-    # ANTES do insert. Em colisão do índice único (8 hex do UUID), gera novo UUID e tenta de novo.
+    agora = datetime.now(timezone.utc)
+    existente = _triagem_identica_recente(uid_str, servico, periodo, extra, agora)
+    if existente:
+        return existente
+    # protocolo é NOT NULL + UNIQUE (Card 3.6): vai na coluna e em solicitacao_dados. O UUID e o protocolo
+    # nascem aqui, então repetir o insert é seguro. 23505 pode ser (a) a 1ª tentativa que já tinha gravado
+    # (devolve a linha) ou (b) colisão dos 8 hex do protocolo com outra triagem (novo UUID e tenta de novo).
     for _tentativa in range(5):
         id_t = str(uuid.uuid4())
-        extra["protocolo"] = _protocolo_para(id_t, ano_proto)
+        extra["protocolo"] = _protocolo_para(id_t, agora.year)
+        linha = {
+            "id_triagem": id_t,
+            "usuario_id": uid_str,
+            "servico": servico,
+            "periodo": periodo,
+            "solicitacao_dados": json.dumps(extra),
+            "protocolo": extra["protocolo"],
+            "data_triagem": agora.isoformat(),
+        }
         try:
-            ins = (
-                _tabela("triagens")
-                .insert(
-                    {
-                        "id_triagem": id_t,
-                        "usuario_id": uid_str,
-                        "servico": servico,
-                        "periodo": periodo,
-                        "solicitacao_dados": json.dumps(extra),
-                        "protocolo": extra["protocolo"],
-                    }
-                )
-                .execute()
-            )
-            break
-        except Exception as exc:
-            msg = str(exc)
-            if "23505" in msg or "duplicate key" in msg.lower():
-                continue
-            raise
-    if ins is None or not ins.data:
-        raise RuntimeError("Não foi possível criar a triagem.")
-    row = ins.data[0]
-    id_t = str(row["id_triagem"])
-    data_triagem_db = row.get("data_triagem")
-    if hasattr(data_triagem_db, "isoformat"):
-        data_solicitacao = data_triagem_db.isoformat()
-    elif data_triagem_db is None:
-        data_solicitacao = datetime.now().isoformat()
-    else:
-        data_solicitacao = str(data_triagem_db)
-    return {
-        "id": id_t,
-        "user_id": uid_str,
-        "nome": extra["nome"],
-        "telefone": extra["telefone"],
-        "servico": servico,
-        "periodo": periodo,
-        "sintomas": extra["sintomas"],
-        "status": extra["status"],
-        "data_solicitacao": data_solicitacao,
-        "protocolo": extra["protocolo"],
-    }
+            ins = _tabela("triagens").insert(linha).execute_com_retry()
+        except Exception as e:
+            if "23505" not in str(e) and "duplicate" not in str(e).lower():
+                raise
+            ja = _tabela("triagens").select("*").eq("id_triagem", id_t).limit(1).execute()
+            if not ja.data:
+                continue  # colisão de protocolo: gera outro UUID
+            ins = ja
+        if not ins.data:
+            raise RuntimeError("Não foi possível criar a triagem.")
+        return _resposta_triagem(ins.data[0], extra)
+    raise RuntimeError("Não foi possível criar a triagem (protocolo repetido).")
 
 
 def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
