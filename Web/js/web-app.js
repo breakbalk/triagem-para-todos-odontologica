@@ -682,3 +682,16 @@ function mascaraCPF(input) {
   }
   input.value = v;
 }
+
+function mostrarErro(texto, idElemento) {
+    idElemento = idElemento || "msg";
+    var el = document.getElementById(idElemento);
+    if (el) {
+        el.textContent = texto;
+        el.hidden = false;
+        el.classList.remove("msg-success");
+        el.classList.add("msg-error");
+    } else {
+        alert(texto);
+    }
+}
