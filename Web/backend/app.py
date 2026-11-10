@@ -401,7 +401,7 @@ def api_triagem_minhas():
 
 @app.route("/api/triagem/admin/todas", methods=["GET"])
 def api_triagem_admin():
-    """Só administrador."""
+    """Só administrador, com suporte opcional a paginação."""
     uid = id_usuario_logado()
     if uid is None:
         return jsonify({"ok": False, "error": "Não autenticado."}), 401
@@ -409,8 +409,31 @@ def api_triagem_admin():
         return jsonify({"ok": False, "error": "Acesso restrito."}), 403
 
     lista = storage.listar_todas_triagens()
-    return jsonify({"ok": True, "triagens": lista})
 
+    # --- LÓGICA DE PAGINAÇÃO ---
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 0))  # 0 traz tudo por padrão para compatibilidade
+    except ValueError:
+        page = 1
+        limit = 0
+
+    total_registros = len(lista)
+
+    if limit > 0:
+        inicio = (page - 1) * limit
+        fim = inicio + limit
+        lista_paginada = lista[inicio:fim]
+    else:
+        lista_paginada = lista
+
+    return jsonify({
+        "ok": True, 
+        "triagens": lista_paginada,
+        "total": total_registros,
+        "page": page,
+        "limit": limit
+    })
 
 @app.route("/api/triagem/admin/atualizar-status", methods=["POST"])
 def api_triagem_admin_atualizar_status():
