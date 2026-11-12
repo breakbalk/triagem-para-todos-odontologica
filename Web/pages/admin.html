@@ -25,8 +25,11 @@
                 <input type="text" id="admin-search" placeholder="Filtrar por paciente ou serviço..." class="form-control">
             </div>
         </div>
-        <div class="table-wrap">
-            <table id="admin-table" class="admin-table">
+        
+        <!-- Altura mínima aplicada para manter o card consistente -->
+        <div class="table-wrap" style="min-height: 520px;">
+            <!-- Largura fixa aplicada para manter as colunas alinhadas em todas as páginas -->
+            <table id="admin-table" class="admin-table" style="table-layout: fixed; width: 100%;">
                 <thead>
                     <tr>
                         <th>Protocolo</th>
@@ -42,6 +45,14 @@
                 <tbody></tbody>
             </table>
         </div>
+
+        <!-- Controles de Paginação padronizados e com borda escura -->
+        <div id="paginacao-container" style="margin: 20px 0; text-align: center; display: flex; justify-content: center; gap: 15px; align-items: center;">
+            <button id="btn-anterior" class="btn-nav btn-ghost" onclick="mudarPagina(-1)" style="cursor: pointer; border: 1px solid #333; border-radius: 20px; padding: 6px 16px; background-color: #ffffff; color: #333;">&laquo; Anterior</button>
+            <span id="info-pagina" style="font-weight: bold; color: #333; font-size: 14px;">Página 1 de 3</span>
+            <button id="btn-proxima" class="btn-nav btn-ghost" onclick="mudarPagina(1)" style="cursor: pointer; border: 1px solid #333; border-radius: 20px; padding: 6px 16px; background-color: #ffffff; color: #333;">Próxima &raquo;</button>
+        </div>
+
     </main>
 
     <script src="/js/web-app.js" defer></script>
