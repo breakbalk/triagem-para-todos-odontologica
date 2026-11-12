@@ -14,6 +14,7 @@ Admin: não há coluna is_admin; quem coincide com COE_ADMIN_EMAIL é tratado co
 import json
 import os
 import random
+import uuid
 from datetime import datetime
 
 _sb_client = None
@@ -179,6 +180,11 @@ def atualizar_senha_por_email(email, password_hash):
         raise ValueError("Usuário não encontrado.")
 
 
+def _protocolo_para(id_triagem, ano):
+    """Protocolo TRG-AAAA-xxxxxxxx derivado do UUID (mesmo formato dos registros existentes)."""
+    return "TRG-%s-%s" % (ano, str(id_triagem).replace("-", "")[:8])
+
+
 def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     uid_str = str(user_id).strip()
     extra = {
@@ -186,22 +192,37 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         "telefone": telefone.strip(),
         "sintomas": (sintomas or "").strip(),
         "status": "Pendente",
-        "protocolo": "__TEMP__",
     }
-    ins = (
-        _sb()
-        .table("triagens")
-        .insert(
-            {
-                "usuario_id": uid_str,
-                "servico": servico,
-                "periodo": periodo,
-                "solicitacao_dados": json.dumps(extra),
-            }
-        )
-        .execute()
-    )
-    if not ins.data:
+    ano_proto = datetime.now().year
+    ins = None
+    # A coluna protocolo é NOT NULL + UNIQUE (Card 3.6): o UUID e o protocolo são gerados
+    # ANTES do insert. Em colisão do índice único (8 hex do UUID), gera novo UUID e tenta de novo.
+    for _tentativa in range(5):
+        id_t = str(uuid.uuid4())
+        extra["protocolo"] = _protocolo_para(id_t, ano_proto)
+        try:
+            ins = (
+                _sb()
+                .table("triagens")
+                .insert(
+                    {
+                        "id_triagem": id_t,
+                        "usuario_id": uid_str,
+                        "servico": servico,
+                        "periodo": periodo,
+                        "solicitacao_dados": json.dumps(extra),
+                        "protocolo": extra["protocolo"],
+                    }
+                )
+                .execute()
+            )
+            break
+        except Exception as exc:
+            msg = str(exc)
+            if "23505" in msg or "duplicate key" in msg.lower():
+                continue
+            raise
+    if ins is None or not ins.data:
         raise RuntimeError("Não foi possível criar a triagem.")
     row = ins.data[0]
     id_t = str(row["id_triagem"])
@@ -212,11 +233,6 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         data_solicitacao = datetime.now().isoformat()
     else:
         data_solicitacao = str(data_triagem_db)
-    ano_proto = datetime.now().year
-    if data_solicitacao and len(data_solicitacao) >= 4 and data_solicitacao[:4].isdigit():
-        ano_proto = int(data_solicitacao[:4])
-    extra["protocolo"] = "TRG-%s-%s" % (ano_proto, id_t.replace("-", "")[:8])
-    _sb().table("triagens").update({"solicitacao_dados": json.dumps(extra)}).eq("id_triagem", id_t).execute()
     return {
         "id": id_t,
         "user_id": uid_str,
