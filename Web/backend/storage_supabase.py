@@ -14,15 +14,25 @@ Admin: não há coluna is_admin; quem coincide com COE_ADMIN_EMAIL é tratado co
 import json
 import os
 import random
+import threading
+import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
-_sb_client = None
+import httpx
+
+_local = threading.local()
+
+# Erro de rede em que a conexão HTTP/2 reaproveitada já tinha sido fechada pelo servidor.
+_ERROS_REDE = (httpx.RemoteProtocolError,)
+_TENTATIVAS = 3
+_ESPERA_S = 0.05
 
 
 def _sb():
-    global _sb_client
-    if _sb_client is None:
+    """Cliente Supabase da thread atual: cada thread do Flask tem o seu (sem compartilhar a conexão HTTP/2)."""
+    cli = getattr(_local, "cliente", None)
+    if cli is None:
         from supabase import create_client
 
         url = os.environ.get("SUPABASE_URL", "").strip()
@@ -31,8 +41,57 @@ def _sb():
             raise RuntimeError(
                 "COE_STORAGE=supabase exige SUPABASE_URL e SUPABASE_KEY no Web/backend/.env — veja .env.example."
             )
-        _sb_client = create_client(url, key)
-    return _sb_client
+        cli = _local.cliente = create_client(url, key)
+    return cli
+
+
+def _descartar_cliente():
+    _local.cliente = None
+
+
+def _com_retry(executar, tentativas=_TENTATIVAS):
+    """Repete a chamada se a conexão foi derrubada (httpx.RemoteProtocolError), com um cliente novo a cada vez."""
+    for i in range(tentativas):
+        try:
+            return executar()
+        except _ERROS_REDE:
+            if i == tentativas - 1:
+                raise
+            _descartar_cliente()
+            time.sleep(_ESPERA_S * (i + 1))
+
+
+class _Consulta:
+    """Encapsula a cadeia table().select()...: o execute() repete em erro de conexão.
+
+    INSERT não repete sozinho (repetir pode duplicar a linha); use execute_com_retry() quando o insert for idempotente.
+    """
+
+    def __init__(self, nome, passos=()):
+        self._nome = nome
+        self._passos = passos
+        self._insert = any(n == "insert" for n, _, _ in passos)
+
+    def _montar(self):
+        q = _sb().table(self._nome)
+        for n, a, k in self._passos:
+            q = getattr(q, n)(*a, **k)
+        return q
+
+    def __getattr__(self, n):
+        if n.startswith("_"):
+            raise AttributeError(n)
+        return lambda *a, **k: _Consulta(self._nome, self._passos + ((n, a, k),))
+
+    def execute(self):
+        return _com_retry(lambda: self._montar().execute(), 1 if self._insert else _TENTATIVAS)
+
+    def execute_com_retry(self):
+        return _com_retry(lambda: self._montar().execute())
+
+
+def _tabela(nome):
+    return _Consulta(nome)
 
 
 def _admin_email_padrao():
@@ -97,7 +156,7 @@ def _row_triagem(row):
 def _criar_admin_padrao():
     from werkzeug.security import generate_password_hash
 
-    r = _sb().table("usuarios").select("id_usuario").limit(1).execute()
+    r = _tabela("usuarios").select("id_usuario").limit(1).execute()
     if r.data and len(r.data) > 0:
         return
 
@@ -105,7 +164,7 @@ def _criar_admin_padrao():
     senha = os.environ.get("COE_ADMIN_PASSWORD", "Admin@coe2026")
     h = generate_password_hash(senha)
     tel = ""
-    _sb().table("usuarios").insert(
+    _tabela("usuarios").insert(
         {
             "nome": "Administrador COE",
             "email": email,
@@ -122,7 +181,7 @@ def init_storage():
 
 def buscar_usuario_por_email(email):
     email = email.strip().lower()
-    r = _sb().table("usuarios").select("*").eq("email", email).limit(1).execute()
+    r = _tabela("usuarios").select("*").eq("email", email).limit(1).execute()
     if not r.data:
         return None
     return _row_user(r.data[0])
@@ -130,7 +189,7 @@ def buscar_usuario_por_email(email):
 
 def buscar_usuario_por_id(user_id):
     uid = str(user_id).strip()
-    r = _sb().table("usuarios").select("*").eq("id_usuario", uid).limit(1).execute()
+    r = _tabela("usuarios").select("*").eq("id_usuario", uid).limit(1).execute()
     if not r.data:
         return None
     return _row_user(r.data[0])
@@ -142,8 +201,7 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     cpf_limpo = (cpf or "").strip() or None
     try:
         ins = (
-            _sb()
-            .table("usuarios")
+            _tabela("usuarios")
             .insert(
                 {
                     "nome": nome.strip(),
@@ -170,8 +228,7 @@ def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
 def atualizar_senha_por_email(email, password_hash):
     email = email.strip().lower()
     r = (
-        _sb()
-        .table("usuarios")
+        _tabela("usuarios")
         .update({"senha": password_hash})
         .eq("email", email)
         .execute()
@@ -185,7 +242,46 @@ def _protocolo_para(id_triagem, ano):
     return "TRG-%s-%s" % (ano, str(id_triagem).replace("-", "")[:8])
 
 
+JANELA_REENVIO_S = 120
+
+
+def _resposta_triagem(row, extra):
+    ds = row.get("data_triagem")
+    return {
+        "id": str(row["id_triagem"]),
+        "user_id": str(row["usuario_id"]),
+        "nome": extra.get("nome", ""),
+        "telefone": extra.get("telefone", ""),
+        "servico": row["servico"],
+        "periodo": row["periodo"],
+        "sintomas": extra.get("sintomas", ""),
+        "status": extra.get("status", "Pendente"),
+        "data_solicitacao": ds.isoformat() if hasattr(ds, "isoformat") else str(ds or ""),
+        "protocolo": extra.get("protocolo", ""),
+    }
+
+
+def _triagem_identica_recente(uid, servico, periodo, extra, agora):
+    """Reenvio (queda de rede, duplo clique): mesma pessoa, mesmos dados, dentro da janela."""
+    desde = (agora - timedelta(seconds=JANELA_REENVIO_S)).isoformat()
+    r = (
+        _tabela("triagens")
+        .select("*")
+        .eq("usuario_id", uid)
+        .eq("servico", servico)
+        .eq("periodo", periodo)
+        .gte("data_triagem", desde)
+        .execute()
+    )
+    for row in r.data or []:
+        ex = _extras_solicitacao(row.get("solicitacao_dados"))
+        if all(ex.get(k) == extra[k] for k in ("nome", "telefone", "sintomas")):
+            return _resposta_triagem(row, ex)
+    return None
+
+
 def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+    """Grava a triagem com UM insert: o UUID e o protocolo (TRG-ano-xxxxxxxx) nascem no app, sem __TEMP__ nem update."""
     uid_str = str(user_id).strip()
     extra = {
         "nome": nome.strip(),
@@ -193,58 +289,38 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
         "sintomas": (sintomas or "").strip(),
         "status": "Pendente",
     }
-    ano_proto = datetime.now().year
-    ins = None
-    # A coluna protocolo é NOT NULL + UNIQUE (Card 3.6): o UUID e o protocolo são gerados
-    # ANTES do insert. Em colisão do índice único (8 hex do UUID), gera novo UUID e tenta de novo.
+    agora = datetime.now(timezone.utc)
+    existente = _triagem_identica_recente(uid_str, servico, periodo, extra, agora)
+    if existente:
+        return existente
+    # protocolo é NOT NULL + UNIQUE (Card 3.6): vai na coluna e em solicitacao_dados. O UUID e o protocolo
+    # nascem aqui, então repetir o insert é seguro. 23505 pode ser (a) a 1ª tentativa que já tinha gravado
+    # (devolve a linha) ou (b) colisão dos 8 hex do protocolo com outra triagem (novo UUID e tenta de novo).
     for _tentativa in range(5):
         id_t = str(uuid.uuid4())
-        extra["protocolo"] = _protocolo_para(id_t, ano_proto)
+        extra["protocolo"] = _protocolo_para(id_t, agora.year)
+        linha = {
+            "id_triagem": id_t,
+            "usuario_id": uid_str,
+            "servico": servico,
+            "periodo": periodo,
+            "solicitacao_dados": json.dumps(extra),
+            "protocolo": extra["protocolo"],
+            "data_triagem": agora.isoformat(),
+        }
         try:
-            ins = (
-                _sb()
-                .table("triagens")
-                .insert(
-                    {
-                        "id_triagem": id_t,
-                        "usuario_id": uid_str,
-                        "servico": servico,
-                        "periodo": periodo,
-                        "solicitacao_dados": json.dumps(extra),
-                        "protocolo": extra["protocolo"],
-                    }
-                )
-                .execute()
-            )
-            break
-        except Exception as exc:
-            msg = str(exc)
-            if "23505" in msg or "duplicate key" in msg.lower():
-                continue
-            raise
-    if ins is None or not ins.data:
-        raise RuntimeError("Não foi possível criar a triagem.")
-    row = ins.data[0]
-    id_t = str(row["id_triagem"])
-    data_triagem_db = row.get("data_triagem")
-    if hasattr(data_triagem_db, "isoformat"):
-        data_solicitacao = data_triagem_db.isoformat()
-    elif data_triagem_db is None:
-        data_solicitacao = datetime.now().isoformat()
-    else:
-        data_solicitacao = str(data_triagem_db)
-    return {
-        "id": id_t,
-        "user_id": uid_str,
-        "nome": extra["nome"],
-        "telefone": extra["telefone"],
-        "servico": servico,
-        "periodo": periodo,
-        "sintomas": extra["sintomas"],
-        "status": extra["status"],
-        "data_solicitacao": data_solicitacao,
-        "protocolo": extra["protocolo"],
-    }
+            ins = _tabela("triagens").insert(linha).execute_com_retry()
+        except Exception as e:
+            if "23505" not in str(e) and "duplicate" not in str(e).lower():
+                raise
+            ja = _tabela("triagens").select("*").eq("id_triagem", id_t).limit(1).execute()
+            if not ja.data:
+                continue  # colisão de protocolo: gera outro UUID
+            ins = ja
+        if not ins.data:
+            raise RuntimeError("Não foi possível criar a triagem.")
+        return _resposta_triagem(ins.data[0], extra)
+    raise RuntimeError("Não foi possível criar a triagem (protocolo repetido).")
 
 
 def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
@@ -255,8 +331,7 @@ def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
 def listar_triagens_do_usuario(user_id):
     uid = str(user_id).strip()
     r = (
-        _sb()
-        .table("triagens")
+        _tabela("triagens")
         .select("*")
         .eq("usuario_id", uid)
         .order("id_triagem", desc=True)
@@ -266,7 +341,7 @@ def listar_triagens_do_usuario(user_id):
 
 
 def listar_todas_triagens():
-    r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
+    r = _tabela("triagens").select("*").order("id_triagem", desc=True).execute()
     return [_row_triagem(row) for row in (r.data or [])]
 
 
@@ -274,13 +349,13 @@ def atualizar_status_triagem(protocolo, novo_status):
     protocolo = (protocolo or "").strip()
     if not protocolo:
         return False
-    r = _sb().table("triagens").select("*").order("id_triagem", desc=True).execute()
+    r = _tabela("triagens").select("*").order("id_triagem", desc=True).execute()
     for row in (r.data or []):
         ex = _extras_solicitacao(row.get("solicitacao_dados"))
         if str(ex.get("protocolo", "")).strip() != protocolo:
             continue
         ex["status"] = (novo_status or "").strip() or "Pendente"
-        _sb().table("triagens").update({"solicitacao_dados": json.dumps(ex)}).eq("id_triagem", row["id_triagem"]).execute()
+        _tabela("triagens").update({"solicitacao_dados": json.dumps(ex)}).eq("id_triagem", row["id_triagem"]).execute()
         return True
     return False
 
@@ -288,14 +363,14 @@ def atualizar_status_triagem(protocolo, novo_status):
 def salvar_token_reset(email):
     email = email.strip().lower()
     token = str(random.randint(10000000, 99999999))
-    _sb().table("password_reset").delete().eq("email", email).execute()
-    _sb().table("password_reset").insert({"email": email, "token": token}).execute()
+    _tabela("password_reset").delete().eq("email", email).execute()
+    _tabela("password_reset").insert({"email": email, "token": token}).execute()
     return token
 
 
 def pegar_token_reset(email):
     email = email.strip().lower()
-    r = _sb().table("password_reset").select("token").eq("email", email).limit(1).execute()
+    r = _tabela("password_reset").select("token").eq("email", email).limit(1).execute()
     if not r.data:
         return None
     return r.data[0]["token"]
@@ -303,20 +378,20 @@ def pegar_token_reset(email):
 
 def limpar_token_reset(email):
     email = email.strip().lower()
-    _sb().table("password_reset").delete().eq("email", email).execute()
+    _tabela("password_reset").delete().eq("email", email).execute()
 
 
 def criar_token_mobile(user_id):
     token = str(random.randint(10**15, 10**16 - 1))
     uid = str(user_id).strip()
-    _sb().table("mobile_token").insert({"token": token, "usuario_id": uid}).execute()
+    _tabela("mobile_token").insert({"token": token, "usuario_id": uid}).execute()
     return token
 
 
 def user_id_do_token_mobile(token):
     if not token:
         return None
-    r = _sb().table("mobile_token").select("usuario_id").eq("token", token).limit(1).execute()
+    r = _tabela("mobile_token").select("usuario_id").eq("token", token).limit(1).execute()
     if not r.data:
         return None
     return str(r.data[0]["usuario_id"])
@@ -325,4 +400,4 @@ def user_id_do_token_mobile(token):
 def apagar_token_mobile(token):
     if not token:
         return
-    _sb().table("mobile_token").delete().eq("token", token).execute()
+    _tabela("mobile_token").delete().eq("token", token).execute()
