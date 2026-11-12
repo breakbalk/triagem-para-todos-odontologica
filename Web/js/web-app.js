@@ -706,6 +706,8 @@ function mostrarErro(texto, idElemento) {
     } else {
         alert(texto);
     }
+}
+
 function mudarPagina(direcao) {
     var totalPaginas = Math.ceil(totalRegistrosGlobal / limitePorPagina) || 1;
     var novaPagina = paginaAtual + direcao;
