@@ -75,36 +75,44 @@ function iniciarBotoesLogout() {
 }
 
 /**
- * POST com JSON. Devolve { okHttp, dados } onde okHttp é true se status 200-299.
+ * POST com JSON com tratamento robusto de falhas de rede (Card 3.3).
  */
 async function postJSON(url, corpo) {
-  var resposta = await fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(corpo),
-  });
-  var dados = await resposta.json();
-  return { okHttp: resposta.ok, status: resposta.status, dados: dados };
+  try {
+    var resposta = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(corpo),
+    });
+    var dados = await resposta.json();
+    return { okHttp: resposta.ok, status: resposta.status, dados: dados };
+  } catch (error) {
+    console.warn("Falha de conexão detectada (offline):", error);
+    // Força um alerta direto na tela para garantir que o utilizador veja o feedback amigável
+    alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+    return {
+      okHttp: false,
+      status: 0,
+      dados: { error: "Sem conexão com a internet. Verifique sua rede e tente novamente." }
+    };
+  }
 }
 
-/** GET simples (ex.: /api/auth/me) */
+/**
+ * GET simples com tratamento robusto de falhas de rede (Card 3.3).
+ */
 async function getJSON(url) {
-  var resposta = await fetch(url, { credentials: "include" });
-  var dados = await resposta.json();
-  return { okHttp: resposta.ok, dados: dados };
-}
-
-function mostrarErro(texto, idElemento) {
-  idElemento = idElemento || "msg";
-  var el = document.getElementById(idElemento);
-  if (el) {
-    el.textContent = texto;
-    el.hidden = false;
-    el.classList.remove("msg-success");
-    el.classList.add("msg-error");
-  } else {
-    alert(texto);
+  try {
+    var resposta = await fetch(url, { credentials: "include" });
+    var dados = await resposta.json();
+    return { okHttp: resposta.ok, dados: dados };
+  } catch (error) {
+    console.warn("Falha de conexão detectada (offline):", error);
+    return {
+      okHttp: false,
+      dados: { ok: false, error: "Falha de rede ao carregar os dados. Verifique sua conexão." }
+    };
   }
 }
 
@@ -419,9 +427,9 @@ async function iniciarTriagem() {
     if (botao) botao.disabled = false;
 
     if (!r.okHttp) {
-      mostrarErro(r.dados.error || "Erro ao enviar.");
-      return;
-    }
+  mostrarErro(r.dados.error || "Erro ao enviar.");
+  return;
+}
 
     sessionStorage.setItem("coe_last_triagem", JSON.stringify(r.dados.triagem));
     window.location.href = "/pages/confirmacao.html";
@@ -685,6 +693,19 @@ function mascaraCPF(input) {
     v = v.substring(0, 3) + "." + v.substring(3);
   }
   input.value = v;
+}
+
+function mostrarErro(texto, idElemento) {
+    idElemento = idElemento || "msg";
+    var el = document.getElementById(idElemento);
+    if (el) {
+        el.textContent = texto;
+        el.hidden = false;
+        el.classList.remove("msg-success");
+        el.classList.add("msg-error");
+    } else {
+        alert(texto);
+    }
 }
 
 function mudarPagina(direcao) {
