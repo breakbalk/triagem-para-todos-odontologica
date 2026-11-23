@@ -341,7 +341,7 @@ def listar_triagens_do_usuario(user_id):
 
 
 def listar_todas_triagens():
-    r = _tabela("triagens").select("*").order("id_triagem", desc=True).execute()
+    r = _tabela("triagens").select("*").order("data_triagem", desc=True).execute()
     return [_row_triagem(row) for row in (r.data or [])]
 
 

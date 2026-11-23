@@ -561,8 +561,9 @@ async function iniciarAdmin() {
   
   var infoPagina = document.getElementById("info-pagina");
   if (infoPagina) {
-      infoPagina.textContent = "Página " + paginaAtual + " de " + totalPaginas;
+    infoPagina.textContent = "Página " + paginaAtual + " de " + totalPaginas;
   }
+  atualizarControlesPaginacao(totalPaginas);
 }
 
 function iniciarModalDocumentos() {
@@ -648,33 +649,52 @@ document.addEventListener("keyup", (event) => {
 });
 
 function formatarStatus(status, protocolo) {
-    const opcoes = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"];
-    var protoAttr = String(protocolo || "").replace(/'/g, "\\'");
+  const opcoes = ["Pendente", "Em Atendimento", "Finalizado", "Cancelado"];
+  var protoAttr = String(protocolo || "").replace(/'/g, "\\'");
+  var statusAtual = escapeHtml(status || "Pendente");
 
-let html = `<select class="status-select" aria-label="Alterar status da triagem ${escapeHtml(protocolo)}" onchange="atualizarStatusBanco('${protoAttr}', this.value)">`;
-    
-    opcoes.forEach(opcao => {
-        const selected = status === opcao ? "selected" : "";
-        html += `<option value="${opcao}" ${selected}>${opcao}</option>`;
-    });
-    
-    html += `</select>`;
-    return html;
+  let html = `<select class="status-select" data-status-anterior="${statusAtual}" aria-label="Alterar status da triagem ${escapeHtml(protocolo)}" onchange="atualizarStatusBanco('${protoAttr}', this.value, this)">`;
+
+  opcoes.forEach(opcao => {
+    const selected = status === opcao ? "selected" : "";
+    html += `<option value="${opcao}" ${selected}>${opcao}</option>`;
+  });
+
+  html += `</select>`;
+  return html;
 }
 
-async function atualizarStatusBanco(protocolo, novoStatus) {
-    try {
-        var r = await postJSON("/atualizar_status", {
-          protocolo: protocolo,
-          status: novoStatus
-        });
-        if (!r.okHttp) {
-          throw new Error(r.dados.error || "Erro no servidor");
-        }
-    } catch (error) {
-        console.error("Falha na comunicação:", error);
-        alert("Não foi possível salvar o status. " + (error && error.message ? error.message : ""));
+async function atualizarStatusBanco(protocolo, novoStatus, selectEl) {
+  var statusAnterior = selectEl ? (selectEl.getAttribute("data-status-anterior") || "Pendente") : "Pendente";
+
+  try {
+    if (selectEl) {
+      selectEl.disabled = true;
     }
+
+    var r = await postJSON("/atualizar_status", {
+      protocolo: protocolo,
+      status: novoStatus
+    });
+
+    if (!r.okHttp) {
+      throw new Error(r.dados.error || "Erro no servidor");
+    }
+
+    if (selectEl) {
+      selectEl.setAttribute("data-status-anterior", novoStatus);
+    }
+  } catch (error) {
+    if (selectEl) {
+      selectEl.value = statusAnterior;
+    }
+    console.error("Falha na comunicação:", error);
+    mostrarErro("Não foi possível salvar o status. Valor revertido para \"" + statusAnterior + "\".");
+  } finally {
+    if (selectEl) {
+      selectEl.disabled = false;
+    }
+  }
 }
 
 /**
@@ -718,4 +738,19 @@ function mudarPagina(direcao) {
 
     paginaAtual = novaPagina;
     iniciarAdmin(); // Recarrega o painel com a nova página
+}
+
+function atualizarControlesPaginacao(totalPaginas) {
+  var btnAnterior = document.getElementById("btn-anterior");
+  var btnProxima = document.getElementById("btn-proxima");
+
+  if (btnAnterior) {
+    btnAnterior.disabled = paginaAtual <= 1;
+    btnAnterior.setAttribute("aria-disabled", paginaAtual <= 1 ? "true" : "false");
+  }
+
+  if (btnProxima) {
+    btnProxima.disabled = paginaAtual >= totalPaginas;
+    btnProxima.setAttribute("aria-disabled", paginaAtual >= totalPaginas ? "true" : "false");
+  }
 }
