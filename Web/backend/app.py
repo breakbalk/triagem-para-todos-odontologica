@@ -150,17 +150,6 @@ def id_usuario_logado():
     return None
 
 
-def usuario_eh_admin():
-    """Sabe se o usuário atual é admin (funciona para web e mobile)."""
-    uid = id_usuario_logado()
-    if uid is None:
-        return False
-    u = storage.buscar_usuario_por_id(uid)
-    if u is None:
-        return False
-    return bool(u.get("is_admin", False))
-
-
 def usuario_tem_acesso_admin():
     """Permissão de gestão: admin e secretaria."""
     uid = id_usuario_logado()

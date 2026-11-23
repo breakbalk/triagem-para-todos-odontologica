@@ -47,7 +47,3 @@ var _host = hostPadrao();
 var _porta = "5000";
 
 export var API_BASE = "http://" + _host + ":" + _porta;
-
-if (__DEV__) {
-  console.log("[COE] API_BASE =", API_BASE, "| isDevice =", Device.isDevice);
-}

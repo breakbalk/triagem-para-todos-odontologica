@@ -101,7 +101,6 @@ def buscar_usuario_por_id(user_id):
 
 def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     email = email.strip().lower()
-    cpf_limpo = (cpf or "").strip()
     if email in dados["users_by_email"]:
         raise ValueError("E-mail já cadastrado.")
     if cpf and any(u.get("cpf") == cpf for u in dados["users"].values()):

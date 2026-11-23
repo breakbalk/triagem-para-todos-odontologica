@@ -198,7 +198,6 @@ def buscar_usuario_por_id(user_id):
 def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     email = email.strip().lower()
     tel = (telefone or "").strip() or None
-    cpf_limpo = (cpf or "").strip() or None
     try:
         ins = (
             _tabela("usuarios")
