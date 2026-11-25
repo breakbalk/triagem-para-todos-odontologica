@@ -172,7 +172,11 @@ def listar_triagens_do_usuario(user_id):
 
 
 def listar_todas_triagens():
-    return list(dados["triagens"])
+    return sorted(
+        dados["triagens"],
+        key=lambda t: str(t.get("data_solicitacao") or ""),
+        reverse=True,
+    )
 
 
 def atualizar_status_triagem(protocolo, novo_status):

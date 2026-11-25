@@ -21,3 +21,10 @@
         grid-column: span 2;
     }
 }
+
+#btn-anterior:disabled,
+#btn-proxima:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
