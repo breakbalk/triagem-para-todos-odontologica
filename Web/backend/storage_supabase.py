@@ -174,7 +174,7 @@ def _criar_admin_padrao():
     ).execute()
 
 
-def init_storage():
+def iniciar_storage():
     _sb()
     _criar_admin_padrao()
 
@@ -322,7 +322,7 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     raise RuntimeError("Não foi possível criar a triagem (protocolo repetido).")
 
 
-def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+def inserir_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     """Alias explícito para documentação (INSERT de triagem)."""
     return criar_triagem(user_id, nome, telefone, servico, periodo, sintomas)
 

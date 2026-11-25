@@ -361,7 +361,7 @@ def api_triagem_nova():
     if periodo not in PERIODOS_OK:
         return jsonify({"ok": False, "error": "Período inválido."}), 400
 
-    t = storage.insert_triagem(uid, nome, telefone, servico, periodo, sintomas)
+    t = storage.inserir_triagem(uid, nome, telefone, servico, periodo, sintomas)
 
     # Para o paciente não precisamos mostrar user_id na resposta
     safe = {}
@@ -461,7 +461,7 @@ def api_atualizar_status_compat():
 
 
 if __name__ == "__main__":
-    storage.init_storage()
+    storage.iniciar_storage()
     porta = int(os.environ.get("PORT", "5000"))
     # 0.0.0.0 = celular na mesma rede Wi‑Fi consegue acessar (use o IP do PC na URL do app)
     host = os.environ.get("FLASK_HOST", "0.0.0.0")

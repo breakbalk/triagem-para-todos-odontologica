@@ -43,7 +43,7 @@ function hostPadrao() {
   return Platform.OS === "android" ? "10.0.2.2" : "localhost";
 }
 
-var _host = hostPadrao();
-var _porta = "5000";
+var host = hostPadrao();
+var porta = "5000";
 
-export var API_BASE = "http://" + _host + ":" + _porta;
+export var API_BASE = "http://" + host + ":" + porta;

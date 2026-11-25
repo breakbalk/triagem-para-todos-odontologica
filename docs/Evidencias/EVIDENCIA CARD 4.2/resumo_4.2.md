@@ -25,6 +25,21 @@ Responsável: Lucas Maciel · Revisor: Cristiano Machado · Execução: 23/11/20
 - Inicialização local (`python app.py`, armazenamento JSON): `/health` 200, `/pages/login.html` 200, `/pages/admin.html` 200, `/css/style.min.css` 200, `/js/web-app.js` 200. `/index.html` passa a dar 404 (antes servia página em branco).
 - Nenhuma rota ou regra de negócio foi alterada.
 
-## Fora do escopo desta entrega
-- Padronização de nomes (variáveis em português e inglês misturadas): mexer em nomes de API/JSON quebraria web e mobile; ficou como sugestão para depois dos testes E2E do 4.1.
-- Build do Mobile (Expo): não rodado aqui; a única mudança é a remoção de um bloco `console.log`.
+## Padronização de nomenclatura (só nomes internos)
+Convenção que já vale no projeto e foi mantida: Python em `snake_case`, JavaScript em `camelCase`, constantes em `MAIUSCULAS_COM_UNDERLINE`, nomes de funções em português (`criar_`, `listar_`, `buscar_`, `iniciar...`). Os desvios encontrados e corrigidos:
+| Antes | Depois | Onde |
+|---|---|---|
+| `init_storage` (inglês) | `iniciar_storage` | `storage.py`, `storage_json.py`, `storage_supabase.py`, `app.py` |
+| `insert_triagem` (inglês) | `inserir_triagem` | `storage.py`, `storage_json.py`, `storage_supabase.py`, `app.py`, `tests/test_api_triagem.py` |
+| `_host`, `_porta` (underline na frente, fora do padrão JS) | `host`, `porta` | `Mobile/src/config.js` |
+
+Ficou de fora de propósito: chaves do JSON, rotas e campos da API, que são o contrato entre Web e Mobile e não mudam antes dos testes E2E (4.1) e de carga (4.3). Os nomes das views Flask (`api_register`, `api_triagem_nova`...) seguem o caminho da rota e já são consistentes entre si.
+
+## Funções duplicadas
+- Python: as funções com o mesmo nome em `storage_json.py` e `storage_supabase.py` são as duas implementações da mesma interface (escolhidas por `COE_STORAGE`), não duplicação. Nenhuma função repetida dentro do mesmo módulo.
+- JavaScript: `getJSON`, `postJSON` e `mascaraTelefone` existem em `Web/js/web-app.js` e no Mobile (`api.js`, `TriageScreen.js`). São plataformas separadas, sem código compartilhado entre elas, então não dá para unificar sem criar uma camada nova (fora do escopo).
+- Nenhuma função duplicada dentro do mesmo arquivo.
+
+## Build final do Mobile (Expo)
+- `npm ci` em `Mobile/`: concluiu sem erro (só avisos de pacotes antigos de terceiros, sem impacto).
+- `npx expo export --platform android`: **concluiu com sucesso**, 787 módulos empacotados, bundle Android gerado, sem erros nem avisos do código do projeto.

@@ -63,7 +63,7 @@ def _criar_admin_padrao():
     dados["next_user_id"] = int(uid) + 1
 
 
-def init_storage():
+def iniciar_storage():
     global dados
     _pasta_data()
 
@@ -156,7 +156,7 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     return registro
 
 
-def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+def inserir_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     """Alias explícito para documentação (INSERT de triagem)."""
     return criar_triagem(user_id, nome, telefone, servico, periodo, sintomas)
 

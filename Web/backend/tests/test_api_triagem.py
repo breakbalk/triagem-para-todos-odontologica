@@ -46,7 +46,7 @@ class TriagemPostTest(unittest.TestCase):
         self.assertEqual(r.status_code, 401)
 
     @patch.object(app_module, "id_usuario_logado", return_value=1)
-    @patch.object(app_module.storage, "insert_triagem")
+    @patch.object(app_module.storage, "inserir_triagem")
     def test_telefone_invalido_nao_persiste(self, mock_insert, _uid):
         r = self.client.post(
             "/api/triagem",
@@ -65,7 +65,7 @@ class TriagemPostTest(unittest.TestCase):
         mock_insert.assert_not_called()
 
     @patch.object(app_module, "id_usuario_logado", return_value=1)
-    @patch.object(app_module.storage, "insert_triagem")
+    @patch.object(app_module.storage, "inserir_triagem")
     def test_telefone_valido_200(self, mock_insert, _uid):
         retorno = {
             "id": "t1",
@@ -99,7 +99,7 @@ class TriagemPostTest(unittest.TestCase):
         mock_insert.assert_called_once()
 
     @patch.object(app_module, "id_usuario_logado", return_value=1)
-    @patch.object(app_module.storage, "insert_triagem")
+    @patch.object(app_module.storage, "inserir_triagem")
     def test_servico_invalido_400(self, mock_insert, _uid):
         r = self.client.post(
             "/api/triagem",
