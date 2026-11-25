@@ -1,0 +1,241 @@
+fase,endpoint,status,segundos
+uso normal,POST /api/triagem,200,0.7633363999775611
+uso normal,GET /api/triagem/minhas,200,0.6431057999725454
+uso normal,GET /api/triagem/admin/todas,200,0.7615865000407211
+uso normal,POST /api/triagem,200,0.6381279999623075
+uso normal,GET /api/triagem/minhas,200,0.6646237000240944
+uso normal,GET /api/triagem/admin/todas,200,0.7793433999759145
+uso normal,POST /api/triagem,200,0.63631729996996
+uso normal,GET /api/triagem/minhas,200,0.6337445999961346
+uso normal,GET /api/triagem/admin/todas,200,0.7030931999906898
+uso normal,POST /api/triagem,200,0.6478336000000127
+uso normal,GET /api/triagem/minhas,200,0.6308642000076361
+uso normal,GET /api/triagem/admin/todas,200,0.7436673000338487
+uso normal,POST /api/triagem,200,0.660999100015033
+uso normal,GET /api/triagem/minhas,200,0.6627508999663405
+uso normal,GET /api/triagem/admin/todas,200,0.7008475000038743
+uso normal,POST /api/triagem,200,0.6224279999732971
+uso normal,GET /api/triagem/minhas,200,0.6400776000227779
+uso normal,GET /api/triagem/admin/todas,200,0.7222577999928035
+uso normal,POST /api/triagem,200,0.6456235999939963
+uso normal,GET /api/triagem/minhas,200,0.6324286999879405
+uso normal,GET /api/triagem/admin/todas,200,0.774176399980206
+uso normal,POST /api/triagem,200,0.6433757999911904
+uso normal,GET /api/triagem/minhas,200,0.6431541999918409
+uso normal,GET /api/triagem/admin/todas,200,0.7082946999580599
+uso normal,POST /api/triagem,200,0.660546799947042
+uso normal,GET /api/triagem/minhas,200,0.6318326000473462
+uso normal,GET /api/triagem/admin/todas,200,0.7249940999899991
+uso normal,POST /api/triagem,200,0.6541772999917157
+uso normal,GET /api/triagem/minhas,200,0.6520713000209071
+uso normal,GET /api/triagem/admin/todas,200,0.7019296000362374
+uso normal,POST /api/triagem,200,0.6383987999870442
+uso normal,GET /api/triagem/minhas,200,0.6421365999849513
+uso normal,GET /api/triagem/admin/todas,200,0.6796242999844253
+uso normal,POST /api/triagem,200,0.6256209000130184
+uso normal,GET /api/triagem/minhas,200,0.621684700017795
+uso normal,GET /api/triagem/admin/todas,200,0.7328513999818824
+uso normal,POST /api/triagem,200,0.6235109999543056
+uso normal,GET /api/triagem/minhas,200,0.6471017999574542
+uso normal,GET /api/triagem/admin/todas,200,0.7316353999776766
+uso normal,POST /api/triagem,200,0.6480574000161141
+uso normal,GET /api/triagem/minhas,200,0.6275996000040323
+uso normal,GET /api/triagem/admin/todas,200,0.7082140000420623
+uso normal,POST /api/triagem,200,0.6663619999890216
+uso normal,GET /api/triagem/minhas,200,0.665901499975007
+uso normal,GET /api/triagem/admin/todas,200,0.6925293999956921
+uso normal,POST /api/triagem,200,0.6316112999920733
+uso normal,GET /api/triagem/minhas,200,0.6139999000006355
+uso normal,GET /api/triagem/admin/todas,200,0.7348829000256956
+uso normal,POST /api/triagem,200,0.6291207000031136
+uso normal,GET /api/triagem/minhas,200,0.6288650000351481
+uso normal,GET /api/triagem/admin/todas,200,0.7764995999750681
+uso normal,POST /api/triagem,200,0.6438680000137538
+uso normal,GET /api/triagem/minhas,200,0.6152685999986716
+uso normal,GET /api/triagem/admin/todas,200,0.6855610000202432
+uso normal,POST /api/triagem,200,0.6584348999895155
+uso normal,GET /api/triagem/minhas,200,0.6260808000224642
+uso normal,GET /api/triagem/admin/todas,200,0.6885613000486046
+uso normal,POST /api/triagem,200,0.6582127000438049
+uso normal,GET /api/triagem/minhas,200,0.6393671999685466
+uso normal,GET /api/triagem/admin/todas,200,0.7147661999915726
+uso normal,POST /api/triagem,200,0.6387919000117108
+uso normal,GET /api/triagem/minhas,200,0.6206862999824807
+uso normal,GET /api/triagem/admin/todas,200,0.7275438000215217
+uso normal,POST /api/triagem,200,0.6281216000206769
+uso normal,GET /api/triagem/minhas,200,0.6268926999764517
+uso normal,GET /api/triagem/admin/todas,200,0.7327555000083521
+uso normal,POST /api/triagem,200,0.6261857000063173
+uso normal,GET /api/triagem/minhas,200,0.6325349999824539
+uso normal,GET /api/triagem/admin/todas,200,0.7005405999952927
+uso normal,POST /api/triagem,200,0.6359420000226237
+uso normal,GET /api/triagem/minhas,200,0.6486372000072151
+uso normal,GET /api/triagem/admin/todas,200,0.7333229999640025
+uso normal,POST /api/triagem,200,0.6524753000121564
+uso normal,GET /api/triagem/minhas,200,0.6590754000353627
+uso normal,GET /api/triagem/admin/todas,200,0.697899500024505
+uso normal,POST /api/triagem,200,0.6323984999908134
+uso normal,GET /api/triagem/minhas,200,0.634034699993208
+uso normal,GET /api/triagem/admin/todas,200,0.7055729000130668
+uso normal,POST /api/triagem,200,0.6203474000212736
+uso normal,GET /api/triagem/minhas,200,0.6536886999965645
+uso normal,GET /api/triagem/admin/todas,200,0.7496552999946289
+uso normal,POST /api/triagem,200,0.6230326000368223
+uso normal,GET /api/triagem/minhas,200,0.6340743000037037
+uso normal,GET /api/triagem/admin/todas,200,0.6993694999837317
+uso normal,POST /api/triagem,200,0.6184851999860257
+uso normal,GET /api/triagem/minhas,200,0.6302798999822699
+uso normal,GET /api/triagem/admin/todas,200,0.7115085999830626
+uso normal,POST /api/triagem,200,0.6544322000117972
+uso normal,GET /api/triagem/minhas,200,0.6682662999955937
+uso normal,GET /api/triagem/admin/todas,200,0.7399209000286646
+concorrência,POST /api/triagem,200,1.2112613000208512
+concorrência,POST /api/triagem,200,1.2303199999732897
+concorrência,POST /api/triagem,200,1.238374600012321
+concorrência,POST /api/triagem,200,1.2467034000437707
+concorrência,POST /api/triagem,200,1.2464747999911197
+concorrência,POST /api/triagem,200,1.2546697999932803
+concorrência,POST /api/triagem,200,1.2600510000484064
+concorrência,POST /api/triagem,200,1.2664972000056878
+concorrência,POST /api/triagem,200,1.2739025999908336
+concorrência,POST /api/triagem,200,1.2760530000086874
+concorrência,GET /api/triagem/minhas,200,1.3154624000308104
+concorrência,GET /api/triagem/minhas,200,1.3183733999612741
+concorrência,GET /api/triagem/minhas,200,1.3213231000117958
+concorrência,GET /api/triagem/minhas,200,1.3437308000284247
+concorrência,GET /api/triagem/minhas,200,1.356849800038617
+concorrência,GET /api/triagem/minhas,200,1.3439340999466367
+concorrência,GET /api/triagem/minhas,200,1.331010400026571
+concorrência,GET /api/triagem/minhas,200,1.365774900012184
+concorrência,GET /api/triagem/minhas,200,1.3509802999906242
+concorrência,GET /api/triagem/minhas,200,1.3456412999657914
+concorrência,GET /api/triagem/admin/todas,200,1.5585119999595918
+concorrência,GET /api/triagem/admin/todas,200,1.5423528999672271
+concorrência,GET /api/triagem/admin/todas,200,1.549471500038635
+concorrência,GET /api/triagem/admin/todas,200,1.571479599981103
+concorrência,GET /api/triagem/admin/todas,200,1.6290655999910086
+concorrência,GET /api/triagem/admin/todas,200,1.5734039999661036
+concorrência,GET /api/triagem/admin/todas,200,1.6182434000074863
+concorrência,GET /api/triagem/admin/todas,200,1.6092998000094667
+concorrência,GET /api/triagem/admin/todas,200,1.596263999992516
+concorrência,GET /api/triagem/admin/todas,200,1.6157169999787584
+concorrência,POST /api/triagem,200,1.4576967000029981
+concorrência,POST /api/triagem,200,1.4323259000084363
+concorrência,POST /api/triagem,200,1.474823699973058
+concorrência,POST /api/triagem,200,1.4723887000000104
+concorrência,POST /api/triagem,200,1.5247097999672405
+concorrência,POST /api/triagem,200,1.4900732000241987
+concorrência,POST /api/triagem,200,1.4677082999842241
+concorrência,POST /api/triagem,200,1.4890886999783106
+concorrência,POST /api/triagem,200,1.6231214000144973
+concorrência,POST /api/triagem,200,1.6414946999866515
+concorrência,GET /api/triagem/minhas,200,1.5635664000292309
+concorrência,GET /api/triagem/minhas,200,1.5067480000434443
+concorrência,GET /api/triagem/minhas,200,1.4938152999966405
+concorrência,GET /api/triagem/minhas,200,1.5740758999600075
+concorrência,GET /api/triagem/minhas,200,1.5056398000451736
+concorrência,GET /api/triagem/minhas,200,1.5555028999806382
+concorrência,GET /api/triagem/minhas,200,1.5957778000156395
+concorrência,GET /api/triagem/minhas,200,1.6224167000036687
+concorrência,GET /api/triagem/minhas,200,1.587042300030589
+concorrência,GET /api/triagem/minhas,200,1.5660468999994919
+concorrência,GET /api/triagem/admin/todas,200,1.490411899983883
+concorrência,GET /api/triagem/admin/todas,200,1.5610828999779187
+concorrência,GET /api/triagem/admin/todas,200,1.5561873999540694
+concorrência,GET /api/triagem/admin/todas,200,1.5885950999800116
+concorrência,GET /api/triagem/admin/todas,200,1.616720499994699
+concorrência,GET /api/triagem/admin/todas,200,1.6320225999807008
+concorrência,GET /api/triagem/admin/todas,200,1.5403068999876268
+concorrência,GET /api/triagem/admin/todas,200,1.5723691000021063
+concorrência,GET /api/triagem/admin/todas,200,1.8618841000134125
+concorrência,GET /api/triagem/admin/todas,200,1.836513499962166
+concorrência,POST /api/triagem,200,1.3849819999886677
+concorrência,POST /api/triagem,200,1.6548563999822363
+concorrência,POST /api/triagem,200,1.439924499951303
+concorrência,POST /api/triagem,200,1.6269538999767974
+concorrência,POST /api/triagem,200,1.449100499972701
+concorrência,POST /api/triagem,200,1.5539827999891713
+concorrência,POST /api/triagem,200,1.5014961999841034
+concorrência,POST /api/triagem,200,1.5381575000355951
+concorrência,POST /api/triagem,200,1.8285846000071615
+concorrência,POST /api/triagem,200,1.8103875000379048
+concorrência,GET /api/triagem/minhas,200,1.466544899973087
+concorrência,GET /api/triagem/minhas,200,1.4464840999571607
+concorrência,GET /api/triagem/minhas,200,1.428551300021354
+concorrência,GET /api/triagem/minhas,200,1.5829196000122465
+concorrência,GET /api/triagem/minhas,200,1.3882556000025943
+concorrência,GET /api/triagem/minhas,200,1.39428249996854
+concorrência,GET /api/triagem/minhas,200,1.8780258999904618
+concorrência,GET /api/triagem/minhas,200,1.519540400011465
+concorrência,GET /api/triagem/minhas,200,1.8993455999880098
+concorrência,GET /api/triagem/minhas,200,1.5512094000005163
+concorrência,GET /api/triagem/admin/todas,200,1.5200668000034057
+concorrência,GET /api/triagem/admin/todas,200,1.544255000015255
+concorrência,GET /api/triagem/admin/todas,200,1.5638686000020243
+concorrência,GET /api/triagem/admin/todas,200,1.577266399981454
+concorrência,GET /api/triagem/admin/todas,200,1.524877700023353
+concorrência,GET /api/triagem/admin/todas,200,1.5769495000131428
+concorrência,GET /api/triagem/admin/todas,200,1.426859200000763
+concorrência,GET /api/triagem/admin/todas,200,1.443144700024277
+concorrência,GET /api/triagem/admin/todas,200,1.4488803999847732
+concorrência,GET /api/triagem/admin/todas,200,1.495221599994693
+concorrência,POST /api/triagem,200,1.3503263000166044
+concorrência,POST /api/triagem,200,1.338927100005094
+concorrência,POST /api/triagem,200,1.3418093000072986
+concorrência,POST /api/triagem,200,1.3454997000517324
+concorrência,POST /api/triagem,200,1.3775010000099428
+concorrência,POST /api/triagem,200,1.3507605000049807
+concorrência,POST /api/triagem,200,1.250376200012397
+concorrência,POST /api/triagem,200,1.264221900026314
+concorrência,POST /api/triagem,200,1.255150599987246
+concorrência,POST /api/triagem,200,1.2855085999472067
+concorrência,GET /api/triagem/minhas,200,1.182520000031218
+concorrência,GET /api/triagem/minhas,200,1.1912480000173673
+concorrência,GET /api/triagem/minhas,200,1.2234463000204414
+concorrência,GET /api/triagem/minhas,200,1.213068499986548
+concorrência,GET /api/triagem/minhas,200,1.2084416000288911
+concorrência,GET /api/triagem/minhas,200,1.2306257999734953
+concorrência,GET /api/triagem/minhas,200,1.2164945999975316
+concorrência,GET /api/triagem/minhas,200,1.231491599988658
+concorrência,GET /api/triagem/minhas,200,1.2830867000157014
+concorrência,GET /api/triagem/minhas,200,1.293743199959863
+concorrência,GET /api/triagem/admin/todas,200,1.379667600034736
+concorrência,GET /api/triagem/admin/todas,200,1.4307360000093468
+concorrência,GET /api/triagem/admin/todas,200,1.3936317000188865
+concorrência,GET /api/triagem/admin/todas,200,1.385578399989754
+concorrência,GET /api/triagem/admin/todas,200,1.378635699977167
+concorrência,GET /api/triagem/admin/todas,200,1.3985318000195548
+concorrência,GET /api/triagem/admin/todas,200,1.3577463999972679
+concorrência,GET /api/triagem/admin/todas,200,1.390397600014694
+concorrência,GET /api/triagem/admin/todas,200,1.316724200034514
+concorrência,GET /api/triagem/admin/todas,200,1.3402547999867238
+concorrência,POST /api/triagem,200,1.2539509999915026
+concorrência,POST /api/triagem,200,1.2538457000046037
+concorrência,POST /api/triagem,200,1.2821382000111043
+concorrência,POST /api/triagem,200,1.3147816000273451
+concorrência,POST /api/triagem,200,1.2926278000231832
+concorrência,POST /api/triagem,200,1.3168792999931611
+concorrência,POST /api/triagem,200,1.2886576000018977
+concorrência,POST /api/triagem,200,1.302301499992609
+concorrência,POST /api/triagem,200,1.2980790000292473
+concorrência,POST /api/triagem,200,1.3433920000097714
+concorrência,GET /api/triagem/minhas,200,1.2422536000376567
+concorrência,GET /api/triagem/minhas,200,1.2100631999783218
+concorrência,GET /api/triagem/minhas,200,1.222254999971483
+concorrência,GET /api/triagem/minhas,200,1.207425999979023
+concorrência,GET /api/triagem/minhas,200,1.1891362000023946
+concorrência,GET /api/triagem/minhas,200,1.2094848999986425
+concorrência,GET /api/triagem/minhas,200,1.1699730000109412
+concorrência,GET /api/triagem/minhas,200,1.2042556999949738
+concorrência,GET /api/triagem/minhas,200,1.2218720999662764
+concorrência,GET /api/triagem/minhas,200,1.200718100008089
+concorrência,GET /api/triagem/admin/todas,200,1.3580461999517865
+concorrência,GET /api/triagem/admin/todas,200,1.3500593000208028
+concorrência,GET /api/triagem/admin/todas,200,1.3693829999538139
+concorrência,GET /api/triagem/admin/todas,200,1.3001514000352472
+concorrência,GET /api/triagem/admin/todas,200,1.3698645000113174
+concorrência,GET /api/triagem/admin/todas,200,1.2976349999662489
+concorrência,GET /api/triagem/admin/todas,200,1.6312913000001572
+concorrência,GET /api/triagem/admin/todas,200,1.2614969999995083
+concorrência,GET /api/triagem/admin/todas,200,1.2298988999682479
+concorrência,GET /api/triagem/admin/todas,200,1.249186200031545
