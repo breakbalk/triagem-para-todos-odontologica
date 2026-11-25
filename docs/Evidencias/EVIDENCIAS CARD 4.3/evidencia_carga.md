@@ -32,10 +32,19 @@ quando a mesma pessoa reenvia dados idênticos. A idempotência se manteve sob c
 
 ## Base depois da carga
 
-- Triagens: **223 = 222 + 1** (as 222 do backup validado em `evidencia_backup.md` + a triagem criada pelo teste).
-- **Limpeza:** apagar o usuário de teste (a triagem dele sai em cascata, `ON DELETE CASCADE`) ou rodar
-  `scripts\medir_latencia.py --limpar`.
-- A conferência final é da administradora da base.
+Logo após a carga, a base tinha **223 = 222 + 1** triagens (as 222 do backup validado em `evidencia_backup.md` + a
+triagem criada pelo teste).
+
+**Limpeza feita em 25/11/2026 20:17** com `scripts\medir_latencia.py --limpar`. O script apagou o usuário de teste, e a
+triagem dele saiu em cascata (`ON DELETE CASCADE`). Saída: `[LATENCIA] Usuário de teste apagado: 1 (triagens e tokens dele em cascata)`.
+
+| Contagem | Antes | Depois |
+|---|---|---|
+| Triagens (total) | 223 | 222 |
+| Usuários `sintetico.latencia@example.com` | 1 | 0 |
+| Usuários `latencia*` / `sintetico.latencia*` `@example.com` | 1 | 0 |
+
+Base de volta ao estado do backup (**222 triagens**).
 
 ## Arquivos
 
