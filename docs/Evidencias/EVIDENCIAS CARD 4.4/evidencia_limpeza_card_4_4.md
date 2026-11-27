@@ -1,4 +1,4 @@
-Evidência — Card 4.4: saneamento de registros de teste em public.triagens
+vidência — Card 4.4: saneamento de registros de teste em public.triagens
 
 Responsável (banco): Maria Eduarda · Revisor: Lucas Maciel Projeto Supabase: Triagem para Todos (produção) · Execução: 22/11/2026, 19:58 UTC
 
