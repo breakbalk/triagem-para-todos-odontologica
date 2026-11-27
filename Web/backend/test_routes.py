@@ -5,12 +5,12 @@ import os
 # Garante que o Python encontre o arquivo app.py na pasta atual
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from app import app 
+from app import app
 
 class TestBackendCOE(unittest.TestCase):
 
     def setUp(self):
-        # Cria um cliente de teste do Flask/FastAPI
+        # Cria um cliente de teste do Flask
         app.testing = True
         self.client = app.test_client()
 

@@ -63,7 +63,7 @@ def _criar_admin_padrao():
     dados["next_user_id"] = int(uid) + 1
 
 
-def init_storage():
+def iniciar_storage():
     global dados
     _pasta_data()
 
@@ -101,7 +101,6 @@ def buscar_usuario_por_id(user_id):
 
 def criar_usuario(nome, email, password_hash, telefone="", cpf=None):
     email = email.strip().lower()
-    cpf_limpo = (cpf or "").strip()
     if email in dados["users_by_email"]:
         raise ValueError("E-mail já cadastrado.")
     if cpf and any(u.get("cpf") == cpf for u in dados["users"].values()):
@@ -157,7 +156,7 @@ def criar_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     return registro
 
 
-def insert_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
+def inserir_triagem(user_id, nome, telefone, servico, periodo, sintomas=""):
     """Alias explícito para documentação (INSERT de triagem)."""
     return criar_triagem(user_id, nome, telefone, servico, periodo, sintomas)
 
